@@ -7,6 +7,8 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Patients } from './pages/Patients';
 import { NewPatient } from './pages/NewPatient';
+import { Professionals } from './pages/Professionals';
+import { NewProfessional } from './pages/NewProfessional';
 
 const queryClient = new QueryClient();
 
@@ -30,10 +32,12 @@ function App() {
             {/* Rotas Privadas (Protegidas) */}
             <Route element={<ProtectedRoute />}>
               <Route element={<DashboardLayout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/patients" element={<Patients />} />
-                <Route path="/patients/new" element={<NewPatient />} />
-                <Route path="/appointments" element={<Appointments />} />
+                <Route index element={<Dashboard />} />
+                <Route path="patients" element={<Patients />} />
+                <Route path="patients/new" element={<NewPatient />} />
+                <Route path="professionals" element={<Professionals />} />
+                <Route path="professionals/new" element={<NewProfessional />} />
+                <Route path="appointments" element={<Appointments />} />
               </Route>
             </Route>
 
