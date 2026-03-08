@@ -8,7 +8,11 @@ class PatientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        fields = ['id', 'user', 'user_detail', 'full_name', 'cpf', 'date_of_birth', 'created_at']
+        fields = [
+            'id', 'user', 'user_detail', 'full_name', 'cpf', 'date_of_birth',
+            'gender', 'phone', 'email', 'address', 'insurance',
+            'emergency_contact', 'notes', 'photo', 'created_at'
+        ]
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     doctor_name = serializers.CharField(source='doctor.get_full_name', read_only=True)

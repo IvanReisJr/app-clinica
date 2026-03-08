@@ -12,8 +12,15 @@ import api from '../api';
 
 const patientSchema = z.object({
     full_name: z.string().min(5, 'Nome completo deve ter no mínimo 5 caracteres'),
-    cpf: z.string().regex(/^\d{11}$/, 'CPF deve conter exatamente 11 números'),
-    date_of_birth: z.string().min(1, 'A data de nascimento é obrigatória'),
+    cpf: z.string().regex(/^\d{11}$/, 'CPF deve conter exatamente 11 números sem máscara'),
+    date_of_birth: z.string().optional().or(z.literal('')),
+    gender: z.string().min(1, 'O sexo é obrigatório'),
+    phone: z.string().min(10, 'O telefone é obrigatório com DDD'),
+    email: z.string().email('E-mail inválido').optional().or(z.literal('')),
+    address: z.string().optional().or(z.literal('')),
+    insurance: z.string().optional().or(z.literal('')),
+    emergency_contact: z.string().optional().or(z.literal('')),
+    notes: z.string().optional().or(z.literal('')),
 });
 
 type PatientForm = z.infer<typeof patientSchema>;
@@ -24,7 +31,11 @@ export function NewPatient() {
 
     const form = useForm<PatientForm>({
         resolver: zodResolver(patientSchema),
-        defaultValues: { full_name: '', cpf: '', date_of_birth: '' }
+        defaultValues: {
+            full_name: '', cpf: '', date_of_birth: '',
+            gender: '', phone: '', email: '',
+            address: '', insurance: '', emergency_contact: '', notes: ''
+        }
     });
     const { errors } = form.formState;
 
@@ -75,7 +86,7 @@ export function NewPatient() {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FieldGroup>
                             <Field data-invalid={!!errors.full_name}>
-                                <FieldLabel htmlFor="full_name" className="text-slate-700 font-semibold">Nome Completo</FieldLabel>
+                                <FieldLabel htmlFor="full_name" className="text-slate-700 font-semibold">Nome Completo *</FieldLabel>
                                 <Input
                                     id="full_name"
                                     placeholder="Ex: Ana Souza Gouveia"
@@ -88,7 +99,7 @@ export function NewPatient() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <Field data-invalid={!!errors.cpf}>
-                                    <FieldLabel htmlFor="cpf" className="text-slate-700 font-semibold">CPF Formal (11 dígitos)</FieldLabel>
+                                    <FieldLabel htmlFor="cpf" className="text-slate-700 font-semibold">CPF Formal (só números) *</FieldLabel>
                                     <Input
                                         id="cpf"
                                         placeholder="000.000.000-00"
@@ -112,6 +123,100 @@ export function NewPatient() {
                                     <FieldError errors={[errors.date_of_birth]} />
                                 </Field>
                             </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <Field data-invalid={!!errors.gender}>
+                                    <FieldLabel htmlFor="gender" className="text-slate-700 font-semibold">Sexo Biológico / Gênero *</FieldLabel>
+                                    <select
+                                        id="gender"
+                                        className="flex h-12 w-full items-center justify-between rounded-md border border-slate-300 bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+                                        {...form.register('gender')}
+                                        aria-invalid={!!errors.gender}
+                                    >
+                                        <option value="" disabled>Selecione um...</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
+                                        <option value="O">Outro</option>
+                                        <option value="N">Prefere não informar</option>
+                                    </select>
+                                    <FieldError errors={[errors.gender]} />
+                                </Field>
+
+                                <Field data-invalid={!!errors.phone}>
+                                    <FieldLabel htmlFor="phone" className="text-slate-700 font-semibold">Telefone Contato *</FieldLabel>
+                                    <Input
+                                        id="phone"
+                                        placeholder="(DD) 90000-0000"
+                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                        {...form.register('phone')}
+                                        aria-invalid={!!errors.phone}
+                                    />
+                                    <FieldError errors={[errors.phone]} />
+                                </Field>
+                            </div>
+
+                            <Field data-invalid={!!errors.email}>
+                                <FieldLabel htmlFor="email" className="text-slate-700 font-semibold">E-mail Profissional/Pessoal</FieldLabel>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="paciente@exemplo.com"
+                                    className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                    {...form.register('email')}
+                                    aria-invalid={!!errors.email}
+                                />
+                                <FieldError errors={[errors.email]} />
+                            </Field>
+
+                            <Field data-invalid={!!errors.address}>
+                                <FieldLabel htmlFor="address" className="text-slate-700 font-semibold">Logradouro / Endereço</FieldLabel>
+                                <Input
+                                    id="address"
+                                    placeholder="Rua, Número, Bairro, Cidade"
+                                    className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                    {...form.register('address')}
+                                    aria-invalid={!!errors.address}
+                                />
+                                <FieldError errors={[errors.address]} />
+                            </Field>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <Field data-invalid={!!errors.insurance}>
+                                    <FieldLabel htmlFor="insurance" className="text-slate-700 font-semibold">Convênio (Plano de Saúde)</FieldLabel>
+                                    <Input
+                                        id="insurance"
+                                        placeholder="Ex: Unimed Cartão Prata"
+                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                        {...form.register('insurance')}
+                                        aria-invalid={!!errors.insurance}
+                                    />
+                                    <FieldError errors={[errors.insurance]} />
+                                </Field>
+
+                                <Field data-invalid={!!errors.emergency_contact}>
+                                    <FieldLabel htmlFor="emergency_contact" className="text-slate-700 font-semibold">Contato Emergência</FieldLabel>
+                                    <Input
+                                        id="emergency_contact"
+                                        placeholder="Nome e Telefone Próximo"
+                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                        {...form.register('emergency_contact')}
+                                        aria-invalid={!!errors.emergency_contact}
+                                    />
+                                    <FieldError errors={[errors.emergency_contact]} />
+                                </Field>
+                            </div>
+
+                            <Field data-invalid={!!errors.notes}>
+                                <FieldLabel htmlFor="notes" className="text-slate-700 font-semibold">Observações Iniciais</FieldLabel>
+                                <textarea
+                                    id="notes"
+                                    placeholder="Anotações gerais, alergias perigosas que impedem medicação rápida ou preferências..."
+                                    className="flex min-h-[100px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm resize-y"
+                                    {...form.register('notes')}
+                                    aria-invalid={!!errors.notes}
+                                />
+                                <FieldError errors={[errors.notes]} />
+                            </Field>
                         </FieldGroup>
 
                         <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
