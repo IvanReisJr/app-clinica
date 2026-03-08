@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, UserPlus, FileText } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, UserPlus, FileText, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
@@ -28,6 +29,16 @@ type PatientForm = z.infer<typeof patientSchema>;
 export function NewPatient() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
 
     const form = useForm<PatientForm>({
         resolver: zodResolver(patientSchema),
@@ -41,7 +52,26 @@ export function NewPatient() {
 
     const mutation = useMutation({
         mutationFn: (newPatient: PatientForm) => {
-            return api.post('v1/patients/', newPatient);
+            const formData = new FormData();
+
+            // Adicionar todos os campos de texto no Form
+            Object.keys(newPatient).forEach(key => {
+                const value = (newPatient as any)[key];
+                if (value !== undefined && value !== null && value !== '') {
+                    formData.append(key, value);
+                }
+            });
+
+            // Injetar arquivo binário da foto se existir
+            if (photoFile) {
+                formData.append('photo', photoFile);
+            }
+
+            return api.post('v1/patients/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -82,6 +112,31 @@ export function NewPatient() {
                             Ocorreu um erro ao salvar o paciente. Verifique se o CPF já está cadastrado ou tente novamente.
                         </div>
                     )}
+
+                    <div className="flex flex-col items-center justify-center mb-10 mt-2">
+                        <div className="relative group w-32 h-32 rounded-full overflow-hidden border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 transition-colors cursor-pointer flex flex-col items-center justify-center shadow-sm">
+                            {photoPreview ? (
+                                <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="flex flex-col items-center text-slate-400">
+                                    <UserPlus className="h-10 w-10 mb-1 opacity-40 text-blue-500" />
+                                </div>
+                            )}
+
+                            {/* Overlay Preto Hover */}
+                            <div className="absolute inset-x-0 bottom-0 top-auto h-1/3 bg-slate-900/60 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100">
+                                <Camera className="h-5 w-5 text-white" />
+                            </div>
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={handleFileChange}
+                            />
+                        </div>
+                        <span className="text-sm font-semibold text-slate-500 mt-3 tracking-tight">Clique para adicionar foto</span>
+                    </div>
 
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <FieldGroup>
