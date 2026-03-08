@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, Lock, User as UserIcon } from 'lucide-react';
+import { Activity, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import api from '../api';
 
 export function Login() {
@@ -30,75 +33,96 @@ export function Login() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
-            <div className="max-w-md w-full bg-card rounded-xl shadow-lg border p-8">
-                <div className="flex flex-col items-center mb-8">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                        <Activity className="h-8 w-8 text-primary" />
+        <div className="min-h-screen w-full flex bg-white font-sans">
+            {/* Lado Esquerdo - Branding Azul */}
+            <div className="hidden lg:flex flex-col flex-1 bg-blue-600 relative overflow-hidden items-center justify-center text-white p-12">
+                {/* Elementos Esféricos Decorativos de Fundo */}
+                <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-500/20 mix-blend-overlay pointer-events-none"></div>
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/20 mix-blend-overlay pointer-events-none"></div>
+
+                <div className="relative z-10 flex flex-col items-center max-w-md text-center">
+                    <div className="bg-white rounded-2xl p-8 mb-10 shadow-2xl shadow-blue-900/20">
+                        <div className="flex items-center gap-3">
+                            <Activity className="h-10 w-10 text-blue-600" />
+                            <span className="text-3xl font-black tracking-tight text-slate-800">Clinica<span className="text-blue-600">Sys</span></span>
+                        </div>
                     </div>
-                    <h2 className="text-2xl font-bold tracking-tight">ClinicaSys Workspace</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Faça login na sua conta institucional</p>
+
+                    <h2 className="text-xl font-medium leading-relaxed text-blue-50">
+                        Gestão inteligente da sua clínica. Prontuário eletrônico, controle de medicamentos e agenda médica em um só lugar.
+                    </h2>
                 </div>
+            </div>
 
-                {error && (
-                    <div className="mb-6 p-3 bg-destructive/10 border-l-4 border-destructive text-destructive text-sm rounded-r-md font-medium">
-                        {error}
+            {/* Lado Direito - Formulário Minimalista (Flat) */}
+            <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 md:px-20 lg:px-32 xl:px-48 bg-white relative">
+
+                <div className="w-full max-w-md mx-auto">
+                    <div className="mb-10 lg:mb-12">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-3">Bem-vindo de volta</h1>
+                        <p className="text-slate-500 text-lg">Acesse sua conta para continuar</p>
                     </div>
-                )}
 
-                <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none">Usuário</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <UserIcon className="h-4 w-4 text-muted-foreground" />
-                            </div>
-                            <input
-                                type="text"
-                                required
-                                className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
-                                placeholder="Ex: dr.joao"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-semibold rounded-r-md">
+                            {error}
                         </div>
-                    </div>
+                    )}
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none">Senha</label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-4 w-4 text-muted-foreground" />
+                    <form onSubmit={handleLogin} className="space-y-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="username" className="text-sm font-semibold text-slate-700">Login Cadastral</Label>
+                            <div className="relative">
+                                <Input
+                                    id="username"
+                                    type="text"
+                                    required
+                                    className="h-12 w-full pl-4 pr-10 text-base border-slate-300 focus:border-blue-600 focus:ring-blue-600/20 shadow-sm rounded-lg"
+                                    placeholder="seu.login"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <UserIcon className="h-5 w-5 text-slate-400" />
+                                </div>
                             </div>
-                            <input
-                                type="password"
-                                required
-                                className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
-                                placeholder="Sua senha secreta"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
                         </div>
-                    </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full mt-2"
-                    >
-                        {loading ? (
-                            <span className="flex items-center gap-2">
-                                <div className="h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"></div>
-                                Entrando...
-                            </span>
-                        ) : (
-                            'Entrar no Sistema'
-                        )}
-                    </button>
-                </form>
+                        <div className="space-y-2">
+                            <Label htmlFor="password" className="text-sm font-semibold text-slate-700">Senha</Label>
+                            <div className="relative">
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    required
+                                    className="h-12 w-full pl-4 pr-10 text-base border-slate-300 focus:border-blue-600 focus:ring-blue-600/20 shadow-sm rounded-lg"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-slate-400" />
+                                </div>
+                            </div>
+                        </div>
 
-                <div className="mt-8 text-center text-xs text-muted-foreground">
-                    &copy; 2026 Sistema Integrado de Clínicas. Todos os direitos reservados.
+                        <Button
+                            type="submit"
+                            className="w-full h-12 mt-8 text-base font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg shadow-blue-600/20"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                                    Autenticando...
+                                </>
+                            ) : (
+                                'Entrar'
+                            )}
+                        </Button>
+                    </form>
                 </div>
             </div>
         </div>

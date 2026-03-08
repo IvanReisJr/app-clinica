@@ -20,15 +20,15 @@ export function DashboardLayout() {
     ];
 
     return (
-        <div className="min-h-screen flex bg-muted/30">
-            {/* Sidebar */}
-            <aside className="w-64 bg-card border-r flex flex-col hidden md:flex">
-                <div className="h-16 flex items-center px-6 border-b">
-                    <Activity className="h-6 w-6 text-primary mr-2" />
-                    <span className="font-bold text-lg tracking-tight">Clinica<span className="text-primary">Sys</span></span>
+        <div className="min-h-screen flex bg-slate-50">
+            {/* Sidebar Navy Premium */}
+            <aside className="w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col hidden md:flex shadow-xl z-10 transition-all">
+                <div className="h-20 flex items-center px-6 border-b border-slate-800/60 bg-slate-950/30">
+                    <Activity className="h-7 w-7 text-blue-500 flex-shrink-0 mr-3 animate-pulse" />
+                    <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm">Clinica<span className="text-blue-500">Sys</span></span>
                 </div>
 
-                <nav className="flex-1 px-4 py-6 space-y-2">
+                <nav className="flex-1 px-4 py-8 space-y-3">
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
                         return (
@@ -36,48 +36,51 @@ export function DashboardLayout() {
                                 key={item.name}
                                 to={item.path}
                                 className={cn(
-                                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                                    "flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 ease-in-out group",
                                     isActive
-                                        ? "bg-primary text-primary-foreground"
-                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40"
+                                        : "text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-1"
                                 )}
                             >
-                                <item.icon className="h-4 w-4" />
+                                <item.icon className={cn("h-5 w-5", isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
                                 {item.name}
                             </Link>
                         )
                     })}
                 </nav>
 
-                <div className="p-4 border-t">
-                    <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                <div className="p-4 border-t border-slate-800 bg-slate-950/20">
+                    <div className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                        <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
                             {user?.username.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                            <p className="text-sm font-medium leading-none">{user?.username}</p>
-                            <p className="text-xs text-muted-foreground mt-1 capitalize">{user?.role}</p>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-bold text-white truncate leading-tight">{user?.username}</p>
+                            <p className="text-xs text-blue-400 mt-0.5 truncate capitalize font-medium">{user?.role}</p>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                        className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors"
                     >
-                        <LogOut className="h-4 w-4" />
-                        Sair
+                        <LogOut className="h-5 w-5" />
+                        Sair do Sistema
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header className="h-16 flex items-center justify-between px-6 border-b bg-card md:hidden">
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+                {/* Textura de fundo muito suave caso queira */}
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay pointer-events-none"></div>
+
+                <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white/70 backdrop-blur-md md:hidden z-20 sticky top-0">
                     <div className="flex items-center">
-                        <Activity className="h-6 w-6 text-primary mr-2" />
-                        <span className="font-bold text-lg">ClinicaSys</span>
+                        <Activity className="h-6 w-6 text-blue-600 mr-2" />
+                        <span className="font-extrabold text-lg text-slate-900 tracking-tight">ClinicaSys</span>
                     </div>
                 </header>
-                <div className="flex-1 overflow-auto p-6 md:p-8">
+                <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-10 relative z-10">
                     <Outlet />
                 </div>
             </main>
