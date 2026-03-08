@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-app_clinica}_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-clinica_db}
+      POSTGRES_USER: ${DB_USER:-clinica_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-clinica_pass}
+    # Mapeando a porta interna 5432 para uma porta livre no Host (ex: 5440)
+    # Isso evita conflito com outros N sistemas rodando PostgreSQL na sua máquina.
+    ports:
+      - "${DB_HOST_PORT:-5440}:5432"
+    volumes:
+      - app_clinica_db_data:/var/lib/postgresql/data
+    networks:
+      - clinica_network
+
+volumes:
+  # Volume nomeado para persistir dados mesmo se o container for derrubado.
+  app_clinica_db_data:
+
+networks:
+  # Rede isolada para não conflitar com outros sistemas locais
+  clinica_network:
+    driver: bridge
