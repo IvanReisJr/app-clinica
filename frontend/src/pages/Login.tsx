@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Activity, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { Lock, User as UserIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import api from '../api';
+import logoMedtrace from '../assets/medtrace-logo.png';
 
 export function Login() {
     const [username, setUsername] = useState('');
@@ -41,11 +42,8 @@ export function Login() {
                 <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/20 mix-blend-overlay pointer-events-none"></div>
 
                 <div className="relative z-10 flex flex-col items-center max-w-md text-center">
-                    <div className="bg-white rounded-2xl p-8 mb-10 shadow-2xl shadow-blue-900/20">
-                        <div className="flex items-center gap-3">
-                            <Activity className="h-10 w-10 text-blue-600" />
-                            <span className="text-3xl font-black tracking-tight text-slate-800">Clinica<span className="text-blue-600">Sys</span></span>
-                        </div>
+                    <div className="bg-white rounded-2xl p-8 mb-10 shadow-2xl shadow-blue-900/20 flex items-center justify-center">
+                        <img src={logoMedtrace} alt="Medtrace" className="h-12 object-contain" />
                     </div>
 
                     <h2 className="text-xl font-medium leading-relaxed text-blue-50">

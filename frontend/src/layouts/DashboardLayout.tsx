@@ -1,7 +1,8 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Users, Calendar, LogOut, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, LogOut } from 'lucide-react';
 import { cn } from '../lib/utils';
+import logoMedtrace from '../assets/medtrace-logo.png';
 
 export function DashboardLayout() {
     const { logout, user } = useAuth();
@@ -24,8 +25,7 @@ export function DashboardLayout() {
             {/* Sidebar Navy Premium */}
             <aside className="w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col hidden md:flex shadow-xl z-10 transition-all">
                 <div className="h-20 flex items-center px-6 border-b border-slate-800/60 bg-slate-950/30">
-                    <Activity className="h-7 w-7 text-blue-500 flex-shrink-0 mr-3 animate-pulse" />
-                    <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm">Clinica<span className="text-blue-500">Sys</span></span>
+                    <img src={logoMedtrace} alt="Medtrace Logo" className="h-8 object-contain" />
                 </div>
 
                 <nav className="flex-1 px-4 py-8 space-y-3">
@@ -76,8 +76,7 @@ export function DashboardLayout() {
 
                 <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white/70 backdrop-blur-md md:hidden z-20 sticky top-0">
                     <div className="flex items-center">
-                        <Activity className="h-6 w-6 text-blue-600 mr-2" />
-                        <span className="font-extrabold text-lg text-slate-900 tracking-tight">ClinicaSys</span>
+                        <img src={logoMedtrace} alt="Medtrace Logo" className="h-6 object-contain" />
                     </div>
                 </header>
                 <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-10 relative z-10">
