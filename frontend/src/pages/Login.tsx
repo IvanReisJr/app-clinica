@@ -43,10 +43,10 @@ export function Login() {
 
                 <div className="relative z-10 flex flex-col items-center max-w-md text-center">
                     <div className="bg-white rounded-2xl p-8 mb-10 shadow-2xl shadow-blue-900/20 flex items-center justify-center">
-                        <img src={logoMedtrace} alt="Medtrace" className="h-12 object-contain" />
+                        <img src={logoMedtrace} alt="Medtrace" className="w-52 h-auto object-contain" />
                     </div>
 
-                    <h2 className="text-xl font-medium leading-relaxed text-blue-50">
+                    <h2 className="text-xl font-medium leading-relaxed text-blue-50 px-6">
                         Gestão inteligente da sua clínica. Prontuário eletrônico, controle de medicamentos e agenda médica em um só lugar.
                     </h2>
                 </div>
