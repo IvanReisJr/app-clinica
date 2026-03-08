@@ -25,7 +25,7 @@ export function DashboardLayout() {
             {/* Sidebar Navy Premium */}
             <aside className="w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col hidden md:flex shadow-xl z-10 transition-all">
                 <div className="h-20 flex items-center px-6 border-b border-slate-800/60 bg-slate-950/30">
-                    <img src={logoMedtrace} alt="Medtrace Logo" className="h-8 object-contain" />
+                    <img src={logoMedtrace} alt="Medtrace Logo" className="w-36 h-auto object-contain" />
                 </div>
 
                 <nav className="flex-1 px-4 py-8 space-y-3">
@@ -76,7 +76,7 @@ export function DashboardLayout() {
 
                 <header className="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white/70 backdrop-blur-md md:hidden z-20 sticky top-0">
                     <div className="flex items-center">
-                        <img src={logoMedtrace} alt="Medtrace Logo" className="h-6 object-contain" />
+                        <img src={logoMedtrace} alt="Medtrace Logo" className="h-8 object-contain" />
                     </div>
                 </header>
                 <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-10 relative z-10">
