@@ -1,6 +1,9 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Users, Calendar, LogOut } from 'lucide-react';
+import {
+    LayoutDashboard, Users, Calendar, LogOut, UserPlus, ListOrdered,
+    Activity, FileText, Pill, Box, BarChart, UserCog, Monitor, Settings
+} from 'lucide-react';
 import { cn } from '../lib/utils';
 import logoMedtrace from '../assets/medtrace-logo.png';
 
@@ -17,7 +20,17 @@ export function DashboardLayout() {
     const navItems = [
         { name: 'Dashboard', path: '/', icon: LayoutDashboard },
         { name: 'Pacientes', path: '/patients', icon: Users },
+        { name: 'Profissionais', path: '/professionals', icon: UserPlus },
         { name: 'Agenda', path: '/appointments', icon: Calendar },
+        { name: 'Fila de Atendimento', path: '/queue', icon: ListOrdered },
+        { name: 'Triagem', path: '/triage', icon: Activity },
+        { name: 'Prontuário', path: '/records', icon: FileText },
+        { name: 'Medicamentos', path: '/medications', icon: Pill },
+        { name: 'Kardex', path: '/kardex', icon: Box },
+        { name: 'Relatórios', path: '/reports', icon: BarChart },
+        { name: 'Usuários', path: '/users', icon: UserCog },
+        { name: 'Painel de Chamada', path: '/call-panel', icon: Monitor },
+        { name: 'Configurações', path: '/settings', icon: Settings },
     ];
 
     return (
@@ -28,7 +41,7 @@ export function DashboardLayout() {
                     <img src={logoMedtrace} alt="Medtrace Logo" className="w-36 h-auto object-contain" />
                 </div>
 
-                <nav className="flex-1 px-4 py-8 space-y-3">
+                <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto">
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
                         return (
@@ -36,13 +49,13 @@ export function DashboardLayout() {
                                 key={item.name}
                                 to={item.path}
                                 className={cn(
-                                    "flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 ease-in-out group",
+                                    "flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out group",
                                     isActive
-                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40"
-                                        : "text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-1"
+                                        ? "bg-blue-600/10 text-blue-500 shadow-sm border border-blue-500/20"
+                                        : "text-slate-400 hover:bg-slate-800/80 hover:text-white"
                                 )}
                             >
-                                <item.icon className={cn("h-5 w-5", isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
+                                <item.icon className={cn("h-5 w-5", isActive ? "text-blue-500" : "text-slate-500 group-hover:text-blue-400")} />
                                 {item.name}
                             </Link>
                         )
