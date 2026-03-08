@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'auditlog',
+    'drf_spectacular',
     
     # Local Apps
     'users',
@@ -96,6 +97,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Sistema de Clínicas API',
+    'DESCRIPTION': 'Documentação RESTful da API do Sistema de Clínicas.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # Outras customizações podem ser adicionadas aqui
 }
 
 SIMPLE_JWT = {
