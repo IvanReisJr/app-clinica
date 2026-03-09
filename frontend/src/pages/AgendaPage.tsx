@@ -16,7 +16,7 @@ import api from "../api";
 interface Appointment {
     id: number;
     patient: number;
-    patient_detail: { id: number; full_name: string; cpf: string | null; record_number: string | null } | null;
+    patient_detail: { id: number; full_name: string; cpf: string | null; } | null;
     professional: number | null;
     professional_detail: { id: number; name: string } | null;
     appointment_date: string;
@@ -108,7 +108,11 @@ export function AgendaPage() {
             toast.success(editing ? "Consulta atualizada" : (isEncaixe ? "Encaixe realizado" : "Consulta agendada"));
             closeModal();
         },
-        onError: () => toast.error("Erro ao salvar consulta. Verifique os dados.")
+        onError: (error: any) => {
+            console.error("Payload rejeitado:", error.response?.data);
+            const msg = error.response?.data ? JSON.stringify(error.response.data).substring(0, 100) : "Erro interno";
+            toast.error(`Falha do Servidor: ${msg}`);
+        }
     });
 
     const mutDelete = useMutation({

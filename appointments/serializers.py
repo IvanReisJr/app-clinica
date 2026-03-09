@@ -6,7 +6,7 @@ from professionals.models import Professional
 class PatientNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = ['id', 'full_name', 'cpf', 'record_number']
+        fields = ['id', 'full_name', 'cpf']
 
 class ProfessionalNestedSerializer(serializers.ModelSerializer):
     class Meta:
