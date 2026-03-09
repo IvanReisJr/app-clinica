@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { User } from "../pages/UsersPage";
 import { Loader2, Save, X, Edit, Plus } from "lucide-react";
 import { cn } from "../lib/utils";
+import { roleOptions, roleLabels } from "../constants/roles";
 
 const userSchema = z.object({
     username: z.string().min(3, "O nome de usuário deve ter pelo menos 3 caracteres").regex(/^[a-zA-Z0-9.@/./+/-/_]+$/, "Login inválido. Não use espaços."),
@@ -37,15 +38,6 @@ interface UserModalProps {
     user: User | null;
 }
 
-const roleOptions = [
-    { value: "admin", label: "Administrador" },
-    { value: "receptionist", label: "Recepção" },
-    { value: "doctor", label: "Médico" },
-    { value: "enfermagem", label: "Enfermagem" },
-    { value: "farmacia", label: "Farmácia" },
-    { value: "financeiro", label: "Financeiro" },
-    { value: "painel", label: "Painel" },
-];
 
 export function UserModal({ isOpen, onClose, user }: UserModalProps) {
     const queryClient = useQueryClient();
@@ -190,7 +182,9 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
                                     onValueChange={(val: string | null) => { if (val) setValue("role", val, { shouldValidate: true }) }}
                                 >
                                     <SelectTrigger className="h-11 rounded-lg border-slate-200">
-                                        <SelectValue placeholder="Selecione" />
+                                        <SelectValue placeholder="Selecione">
+                                            {roleValue ? (roleLabels[roleValue] || roleValue) : ""}
+                                        </SelectValue>
                                     </SelectTrigger>
                                     <SelectContent>
                                         {roleOptions.map(opt => (

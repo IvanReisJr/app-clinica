@@ -13,6 +13,7 @@ from medical_records.views import MedicalRecordViewSet, PrescriptionViewSet
 from medications.views import MedicationViewSet, MedicationMovementViewSet
 from appointments.views import AppointmentViewSet
 from professionals.views import ProfessionalViewSet
+from dashboard.views import DashboardStatsView
 
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
@@ -30,6 +31,7 @@ urlpatterns = [
     
     # Endpoints principais da API V1
     path('api/v1/', include(router.urls)),
+    path('api/v1/dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
     
     # Endpoints de Autenticação JWT
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -7,16 +7,7 @@ import {
 import { cn } from '../lib/utils';
 import logoMedtrace from '../assets/medtrace-logo.png';
 import { useCan } from '../components/HasPermission';
-
-const roleLabels: Record<string, string> = {
-    admin: "Administrador",
-    receptionist: "Recepção",
-    doctor: "Médico",
-    enfermagem: "Enfermagem",
-    farmacia: "Farmácia",
-    financeiro: "Financeiro",
-    painel: "Painel",
-};
+import { roleLabels } from '../constants/roles';
 
 export function DashboardLayout() {
     const { logout, user } = useAuth();
