@@ -9,16 +9,10 @@ import { Patients } from './pages/Patients';
 import { NewPatient } from './pages/NewPatient';
 import { Professionals } from './pages/Professionals';
 import { NewProfessional } from './pages/NewProfessional';
+import { AgendaPage } from './pages/AgendaPage';
+import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
-
-// Component de Placeholder genérico
-const Appointments = () => (
-  <div className="space-y-6">
-    <h2 className="text-3xl font-bold tracking-tight">Agenda Médica</h2>
-    <p className="text-muted-foreground">Em construção.</p>
-  </div>
-);
 
 function App() {
   return (
@@ -38,7 +32,7 @@ function App() {
                 <Route path="professionals" element={<Professionals />} />
                 <Route path="professionals/new" element={<NewProfessional />} />
                 <Route path="professionals/:id/edit" element={<NewProfessional />} />
-                <Route path="appointments" element={<Appointments />} />
+                <Route path="appointments" element={<AgendaPage />} />
               </Route>
             </Route>
 
@@ -46,6 +40,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
+        <Toaster richColors position="top-right" />
       </AuthProvider>
     </QueryClientProvider>
   );
