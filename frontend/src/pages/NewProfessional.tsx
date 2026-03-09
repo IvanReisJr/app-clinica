@@ -70,7 +70,14 @@ export function NewProfessional() {
                 <CardContent className="p-8">
                     {mutation.isError && (
                         <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-semibold rounded-r-md shadow-sm">
-                            Ocorreu um erro ao salvar o registro. Reveja as restrições inseridas.
+                            <p>Ocorreu um erro ao salvar o registro. Reveja as restrições inseridas.</p>
+                            <p className="mt-2 font-mono text-xs text-red-600">
+                                Console Backend: {
+                                    (mutation.error as any)?.response?.data
+                                        ? JSON.stringify((mutation.error as any).response.data)
+                                        : mutation.error?.message
+                                }
+                            </p>
                         </div>
                     )}
 

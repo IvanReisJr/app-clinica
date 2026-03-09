@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { Search, Plus, Loader2, UserCog } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Search, Plus, Loader2, UserCog, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,8 @@ interface Professional {
 }
 
 export function Professionals() {
+    const queryClient = useQueryClient();
+
     const { data: professionals, isLoading } = useQuery<Professional[]>({
         queryKey: ['professionals'],
         queryFn: async () => {
@@ -26,6 +28,22 @@ export function Professionals() {
             return response.data;
         }
     });
+
+    const deleteMutation = useMutation({
+        mutationFn: async (id: number) => {
+            await api.delete(`v1/professionals/${id}/`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['professionals'] });
+        }
+    });
+
+    const handleDelete = (e: React.MouseEvent, id: number, name: string) => {
+        e.stopPropagation();
+        if (window.confirm(`Tem certeza que deseja excluir o profissional ${name}?`)) {
+            deleteMutation.mutate(id);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -65,12 +83,13 @@ export function Professionals() {
                                 <TableHead className="hidden lg:table-cell">CRM</TableHead>
                                 <TableHead className="hidden lg:table-cell">Contato</TableHead>
                                 <TableHead className="text-right">Status</TableHead>
+                                <TableHead className="text-center w-[100px]">Ações</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading && (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-40 text-center">
+                                    <TableCell colSpan={6} className="h-40 text-center">
                                         <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary mb-2" />
                                         <p className="text-sm text-muted-foreground">Carregando especialistas...</p>
                                     </TableCell>
@@ -79,7 +98,7 @@ export function Professionals() {
 
                             {!isLoading && (!professionals || professionals.length === 0) && (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="h-56 text-center text-muted-foreground">
+                                    <TableCell colSpan={6} className="h-56 text-center text-muted-foreground">
                                         <div className="mx-auto bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-3">
                                             <UserCog className="h-6 w-6 text-primary" />
                                         </div>
@@ -101,6 +120,18 @@ export function Professionals() {
                                         ) : (
                                             <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">Inativo</Badge>
                                         )}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 px-2"
+                                            onClick={(e) => handleDelete(e, prof.id, prof.name)}
+                                            disabled={deleteMutation.isPending}
+                                            title="Excluir Profissional"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
