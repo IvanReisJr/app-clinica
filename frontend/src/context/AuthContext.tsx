@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import api from '../api';
 
 interface User {
     id: number;
     username: string;
     email: string;
     role: string;
+    full_name: string | null;
+    permissions: string[];
 }
 
 interface AuthContextType {
@@ -21,21 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Na inicialização, checar se tem token e carregar o 'My Profile' (mockado por enquanto ou via endpoint)
+    const fetchMe = async () => {
         const token = localStorage.getItem('access_token');
         if (token) {
-            // Idealmente, chamaríamos um endpoint /api/users/me/
-            // Como não criamos esse endpoint específico ainda, vamos assumir logado pelo token
-            setUser({ id: 0, username: 'admin', email: 'admin@clinica.com', role: 'admin' });
+            try {
+                const res = await api.get('v1/users/me/');
+                setUser(res.data);
+            } catch (err) {
+                console.error("Erro ao carregar perfil", err);
+                logout();
+            }
         }
         setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchMe();
     }, []);
 
-    const login = (access: string, refresh: string) => {
+    const login = async (access: string, refresh: string) => {
         localStorage.setItem('access_token', access);
         localStorage.setItem('refresh_token', refresh);
-        setUser({ id: 0, username: 'admin', email: 'admin@clinica.com', role: 'admin' });
+        await fetchMe();
     };
 
     const logout = () => {

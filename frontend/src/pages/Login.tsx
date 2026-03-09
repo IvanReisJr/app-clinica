@@ -23,8 +23,8 @@ export function Login() {
 
         try {
             const response = await api.post('auth/token/', { username, password });
-            login(response.data.access, response.data.refresh);
-            navigate('/');
+            await login(response.data.access, response.data.refresh);
+            navigate('/', { replace: true });
         } catch (err: any) {
             setError('Credenciais inválidas. Tente novamente.');
             console.error(err);

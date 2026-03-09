@@ -2,10 +2,21 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
     LayoutDashboard, Users, Calendar, LogOut, UserPlus, ListOrdered,
-    Activity, FileText, Pill, Box, BarChart, UserCog, Monitor, Settings
+    FileText, Pill, Box, UserCog
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import logoMedtrace from '../assets/medtrace-logo.png';
+import { useCan } from '../components/HasPermission';
+
+const roleLabels: Record<string, string> = {
+    admin: "Administrador",
+    receptionist: "Recepção",
+    doctor: "Médico",
+    enfermagem: "Enfermagem",
+    farmacia: "Farmácia",
+    financeiro: "Financeiro",
+    painel: "Painel",
+};
 
 export function DashboardLayout() {
     const { logout, user } = useAuth();
@@ -17,21 +28,21 @@ export function DashboardLayout() {
         navigate('/login');
     };
 
+    const can = useCan();
+
     const navItems = [
         { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-        { name: 'Pacientes', path: '/patients', icon: Users },
-        { name: 'Profissionais', path: '/professionals', icon: UserPlus },
-        { name: 'Agenda', path: '/appointments', icon: Calendar },
-        { name: 'Fila de Atendimento', path: '/queue', icon: ListOrdered },
-        { name: 'Triagem', path: '/triage', icon: Activity },
-        { name: 'Prontuário', path: '/records', icon: FileText },
-        { name: 'Medicamentos', path: '/medications', icon: Pill },
-        { name: 'Kardex', path: '/kardex', icon: Box },
-        { name: 'Relatórios', path: '/reports', icon: BarChart },
-        { name: 'Usuários', path: '/users', icon: UserCog },
-        { name: 'Painel de Chamada', path: '/call-panel', icon: Monitor },
-        { name: 'Configurações', path: '/settings', icon: Settings },
+        { name: 'Pacientes', path: '/patients', icon: Users, permission: 'view_patients' },
+        { name: 'Profissionais', path: '/professionals', icon: UserPlus, permission: 'view_professionals' },
+        { name: 'Agenda', path: '/appointments', icon: Calendar, permission: 'view_agenda' },
+        { name: 'Fila de Atendimento', path: '/queue', icon: ListOrdered, permission: 'confirm_arrival' },
+        { name: 'Prontuário', path: '/records', icon: FileText, permission: 'view_records' },
+        { name: 'Medicamentos', path: '/medications', icon: Pill, permission: 'view_medications' },
+        { name: 'Kardex', path: '/kardex', icon: Box, permission: 'view_kardex' },
+        { name: 'Usuários', path: '/users', icon: UserCog, permission: 'view_users' },
     ];
+
+    const visibleItems = navItems.filter(item => !item.permission || can(item.permission));
 
     return (
         <div className="min-h-screen flex bg-slate-50">
@@ -42,20 +53,23 @@ export function DashboardLayout() {
                 </div>
 
                 <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto">
-                    {navItems.map((item) => {
-                        const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
+                    {visibleItems.map((item) => {
+                        const isActive = item.path === '/'
+                            ? location.pathname === '/'
+                            : location.pathname.startsWith(item.path);
+
                         return (
                             <Link
                                 key={item.name}
                                 to={item.path}
                                 className={cn(
-                                    "flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out group",
+                                    "flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 group border",
                                     isActive
-                                        ? "bg-blue-600/10 text-blue-500 shadow-sm border border-blue-500/20"
-                                        : "text-slate-400 hover:bg-slate-800/80 hover:text-white"
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-900/40 border-blue-500/50"
+                                        : "text-slate-400 hover:bg-slate-800/80 hover:text-white border-transparent"
                                 )}
                             >
-                                <item.icon className={cn("h-5 w-5", isActive ? "text-blue-500" : "text-slate-500 group-hover:text-blue-400")} />
+                                <item.icon className={cn("h-5 w-5", isActive ? "text-white" : "text-slate-500 group-hover:text-blue-400")} />
                                 {item.name}
                             </Link>
                         )
@@ -65,11 +79,13 @@ export function DashboardLayout() {
                 <div className="p-4 border-t border-slate-800 bg-slate-950/20">
                     <div className="flex items-center gap-3 mb-4 px-3 py-2 rounded-xl bg-slate-800/50 border border-slate-700/50">
                         <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-inner">
-                            {user?.username.charAt(0).toUpperCase()}
+                            {(user?.full_name || user?.username || "?").charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-bold text-white truncate leading-tight">{user?.username}</p>
-                            <p className="text-xs text-blue-400 mt-0.5 truncate capitalize font-medium">{user?.role}</p>
+                            <p className="text-sm font-bold text-white truncate leading-tight">{user?.full_name || user?.username}</p>
+                            <p className="text-xs text-blue-400 mt-0.5 truncate font-medium">
+                                {user ? (roleLabels[user.role] || user.role) : "Visitante"}
+                            </p>
                         </div>
                     </div>
                     <button

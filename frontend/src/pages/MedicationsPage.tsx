@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { MedicationModal } from "../components/MedicationModal";
 import { KardexModal } from "../components/KardexModal";
+import { HasPermission } from "../components/HasPermission";
 import { format, isAfter, addDays } from "date-fns";
 import {
     Tooltip, TooltipContent, TooltipTrigger, TooltipProvider
@@ -165,9 +166,11 @@ export function MedicationsPage() {
                             </div>
                         </div>
                     </div>
-                    <Button onClick={() => { setSelectedMed(null); setIsModalOpen(true); }} className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200/50 h-12 px-6 rounded-xl font-bold">
-                        <Plus className="h-5 w-5 mr-2" /> Novo Medicamento
-                    </Button>
+                    <HasPermission slug='manage_medications'>
+                        <Button onClick={() => { setSelectedMed(null); setIsModalOpen(true); }} className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200/50 h-12 px-6 rounded-xl font-bold">
+                            <Plus className="h-5 w-5 mr-2" /> Novo Medicamento
+                        </Button>
+                    </HasPermission>
                 </div>
 
                 {/* Busca */}

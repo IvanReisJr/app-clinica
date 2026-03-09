@@ -22,7 +22,7 @@ export function Dashboard() {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="flex items-center justify-between pb-2">
                 <h2 className="text-2xl font-bold tracking-tight text-slate-800">Dashboard</h2>
                 {user?.role === 'admin' && (
@@ -40,12 +40,12 @@ export function Dashboard() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {topStats.map((stat) => (
                     <Card key={stat.title} className="shadow-sm border-slate-200">
-                        <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
+                        <CardContent className="p-4 flex flex-col items-center justify-center text-center space-y-2">
                             <div className="flex items-center justify-center gap-3">
-                                <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
-                                <div className="text-3xl font-bold tracking-tighter text-slate-900">{stat.value}</div>
+                                <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
+                                <div className="text-2xl font-bold tracking-tighter text-slate-900">{stat.value}</div>
                             </div>
-                            <p className="text-sm font-medium text-slate-500">{stat.title}</p>
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{stat.title}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -55,15 +55,15 @@ export function Dashboard() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {bottomStats.map((stat) => (
                     <Card key={stat.title} className="shadow-sm border-slate-200">
-                        <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
+                        <CardContent className="p-4 flex flex-col items-center justify-center text-center space-y-2">
                             <div className="flex items-center justify-center gap-2 flex-col">
-                                <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+                                <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-3xl font-bold tracking-tighter text-slate-900">{stat.value}</span>
-                                    {stat.unit && <span className="text-sm font-semibold text-slate-500">{stat.unit}</span>}
+                                    <span className="text-2xl font-bold tracking-tighter text-slate-900">{stat.value}</span>
+                                    {stat.unit && <span className="text-[10px] font-bold text-slate-400 uppercase">{stat.unit}</span>}
                                 </div>
                             </div>
-                            <p className="text-sm font-medium text-slate-500">{stat.title}</p>
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{stat.title}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -71,35 +71,35 @@ export function Dashboard() {
 
             {/* Gráficos / Listas Infeliores */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-                <Card className="min-h-[350px] flex flex-col shadow-sm border-slate-200">
-                    <CardHeader className="border-b border-slate-100 bg-slate-50/50 pb-4">
-                        <CardTitle className="text-base font-bold text-slate-800">Consultas por Mês</CardTitle>
+                <Card className="min-h-[280px] flex flex-col shadow-sm border-slate-200">
+                    <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-3 px-4">
+                        <CardTitle className="text-sm font-bold text-slate-800 uppercase tracking-tight">Consultas por Mês</CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6 flex-1 flex flex-col">
-                        <div className="flex-1 flex items-end justify-between px-2 pb-6 gap-2">
+                    <CardContent className="p-4 flex-1 flex flex-col">
+                        <div className="flex-1 flex items-end justify-between px-2 pb-2 gap-2">
                             {/* Gráfico de Barras Falso imitando a referência */}
                             {['out', 'nov', 'dez', 'jan', 'fev'].map(mes => (
-                                <div key={mes} className="flex flex-col items-center gap-3 w-full">
+                                <div key={mes} className="flex flex-col items-center gap-2 w-full">
                                     <div className="w-full bg-slate-100 rounded-t-sm" style={{ height: '4px' }}></div>
-                                    <span className="text-xs text-slate-400 font-medium">{mes}</span>
+                                    <span className="text-[10px] text-slate-400 font-bold uppercase">{mes}</span>
                                 </div>
                             ))}
-                            <div className="flex flex-col items-center gap-3 w-full">
-                                <div className="w-full bg-blue-600 rounded-t-sm shadow-sm" style={{ height: '140px' }}></div>
-                                <span className="text-xs text-slate-700 font-bold">mar</span>
+                            <div className="flex flex-col items-center gap-2 w-full">
+                                <div className="w-full bg-blue-600 rounded-t-sm shadow-sm" style={{ height: '100px' }}></div>
+                                <span className="text-[10px] text-slate-700 font-extrabold uppercase uppercase">mar</span>
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="min-h-[350px] flex flex-col shadow-sm border-slate-200">
-                    <CardHeader className="border-b border-slate-100 bg-slate-50/50 pb-4">
-                        <CardTitle className="text-base font-bold text-slate-800">Status das Consultas (Hoje)</CardTitle>
+                <Card className="min-h-[280px] flex flex-col shadow-sm border-slate-200">
+                    <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-3 px-4">
+                        <CardTitle className="text-sm font-bold text-slate-800 uppercase tracking-tight">Status das Consultas (Hoje)</CardTitle>
                     </CardHeader>
-                    <CardContent className="pt-6 flex-1 flex items-center justify-center">
+                    <CardContent className="p-4 flex-1 flex items-center justify-center">
                         <div className="text-center text-slate-400 flex flex-col items-center">
-                            <CalendarDays className="h-10 w-10 mb-3 opacity-20" />
-                            <p className="text-sm font-medium">Nenhuma consulta registrada para hoje.</p>
+                            <CalendarDays className="h-8 w-8 mb-2 opacity-20" />
+                            <p className="text-xs font-semibold uppercase tracking-wide">Nenhuma consulta registrada hoje.</p>
                         </div>
                     </CardContent>
                 </Card>

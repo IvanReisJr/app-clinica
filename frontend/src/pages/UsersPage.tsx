@@ -52,10 +52,24 @@ export function UsersPage() {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeFilter, setActiveFilter] = useState<'active' | 'inactive'>('active');
+    const [activeTab, setActiveTab] = useState<'users' | 'permissions'>('users');
+    const [selectedRole, setSelectedRole] = useState<string>('admin');
+    const [permissions, setPermissions] = useState<any[]>([]);
+    const [isSaving, setIsSaving] = useState(false);
 
     const { data: users = [] } = useQuery<User[]>({
         queryKey: ['users'],
         queryFn: async () => (await api.get('v1/users/')).data
+    });
+
+    useQuery({
+        queryKey: ['permissions', selectedRole],
+        queryFn: async () => {
+            const res = await api.get(`v1/permissions/matrix/?role=${selectedRole}`);
+            setPermissions(res.data);
+            return res.data;
+        },
+        enabled: activeTab === 'permissions'
     });
 
     const mutToggle = useMutation({
@@ -139,21 +153,145 @@ export function UsersPage() {
                             </div>
                         </div>
                     </div>
-                    <Button onClick={() => { setSelectedUser(null); setIsModalOpen(true); }} className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200/50 h-12 px-6 rounded-xl font-bold">
-                        <Plus className="h-5 w-5 mr-2" /> Novo Usuário
-                    </Button>
+                    {activeTab === 'users' ? (
+                        <Button onClick={() => { setSelectedUser(null); setIsModalOpen(true); }} className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200/50 h-12 px-6 rounded-xl font-bold">
+                            <Plus className="h-5 w-5 mr-2" /> Novo Usuário
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={async () => {
+                                setIsSaving(true);
+                                try {
+                                    await api.post('v1/permissions/bulk_save/', {
+                                        role: selectedRole,
+                                        permissions: permissions.map(p => ({ slug: p.slug, is_granted: p.is_granted }))
+                                    });
+                                    toast.success("Permissões salvas!");
+                                } finally {
+                                    setIsSaving(false);
+                                }
+                            }}
+                            disabled={isSaving}
+                            className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200/50 h-12 px-6 rounded-xl font-bold"
+                        >
+                            <Shield className="h-5 w-5 mr-2" /> Salvar Permissões
+                        </Button>
+                    )}
                 </div>
 
-                {/* Busca */}
-                <div className="relative max-w-xl">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                    <Input
-                        placeholder="Buscar por nome ou e-mail..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-12 h-12 bg-white border-slate-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500/20"
-                    />
+                {/* Abas */}
+                <div className="flex gap-1 p-1 bg-slate-100/50 rounded-xl w-fit border border-slate-200">
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={cn(
+                            "px-6 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2",
+                            activeTab === 'users' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                        )}
+                    >
+                        <Users className="h-4 w-4" /> Usuários
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('permissions')}
+                        className={cn(
+                            "px-6 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2",
+                            activeTab === 'permissions' ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                        )}
+                    >
+                        <Shield className="h-4 w-4" /> Permissões
+                    </button>
                 </div>
+
+                {activeTab === 'users' ? (
+                    <>
+                        {/* Busca */}
+                        <div className="relative max-w-xl">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                            <Input
+                                placeholder="Buscar por nome ou e-mail..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-12 h-12 bg-white border-slate-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500/20"
+                            />
+                        </div>
+                        {/* Tabela de usuários existente... */}
+                    </>
+                ) : (
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-8 space-y-8">
+                        {/* Seletor de Perfil */}
+                        <div className="flex flex-wrap gap-2">
+                            {Object.entries(roleLabels).map(([role, label]) => (
+                                <button
+                                    key={role}
+                                    onClick={() => setSelectedRole(role)}
+                                    className={cn(
+                                        "px-5 py-2.5 rounded-xl font-bold text-sm transition-all border",
+                                        selectedRole === role
+                                            ? "bg-blue-600 text-white border-blue-700 shadow-md scale-105"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                    )}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-6">
+                                <Shield className="h-5 w-5 text-blue-600" />
+                                Permissões para: <span className="text-blue-600">{roleLabels[selectedRole]}</span>
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-4">
+                                {permissions.map((p, idx) => (
+                                    <label
+                                        key={p.slug}
+                                        className="group flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors border border-transparent hover:border-slate-100"
+                                    >
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={p.is_granted}
+                                                onChange={(e) => {
+                                                    const updated = [...permissions];
+                                                    updated[idx].is_granted = e.target.checked;
+                                                    setPermissions(updated);
+                                                }}
+                                                className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer"
+                                            />
+                                        </div>
+                                        <span className={cn(
+                                            "font-medium text-[15px] transition-colors",
+                                            p.is_granted ? "text-slate-900" : "text-slate-500"
+                                        )}>
+                                            {p.label}
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 flex justify-end">
+                            <Button
+                                onClick={async () => {
+                                    setIsSaving(true);
+                                    try {
+                                        await api.post('v1/permissions/bulk_save/', {
+                                            role: selectedRole,
+                                            permissions: permissions.map(p => ({ slug: p.slug, is_granted: p.is_granted }))
+                                        });
+                                        toast.success("Permissões salvas!");
+                                    } finally {
+                                        setIsSaving(false);
+                                    }
+                                }}
+                                disabled={isSaving}
+                                className="bg-blue-600 hover:bg-blue-700 h-12 px-8 rounded-xl font-bold shadow-lg shadow-blue-200"
+                            >
+                                {isSaving ? "Salvando..." : "Salvar Permissões"}
+                            </Button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Tabela */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">

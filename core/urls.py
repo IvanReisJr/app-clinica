@@ -7,7 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 # Importando as views das apps
-from users.views import CustomUserViewSet
+from users.views import CustomUserViewSet, RolePermissionViewSet
 from patients.views import PatientViewSet
 from medical_records.views import MedicalRecordViewSet, PrescriptionViewSet
 from medications.views import MedicationViewSet, MedicationMovementViewSet
@@ -16,6 +16,7 @@ from professionals.views import ProfessionalViewSet
 
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
+router.register(r'permissions', RolePermissionViewSet, basename='permission')
 router.register(r'patients', PatientViewSet, basename='patient')
 router.register(r'records', MedicalRecordViewSet, basename='record')
 router.register(r'prescriptions', PrescriptionViewSet, basename='prescription')
