@@ -327,7 +327,9 @@ export function AgendaPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
                     {weekDays.map((day) => {
-                        const dayItems = filteredAppts.filter((a) => a.appointment_date === format(day, "yyyy-MM-dd"));
+                        const dayItems = filteredAppts
+                            .filter((a) => a.appointment_date === format(day, "yyyy-MM-dd"))
+                            .sort((a, b) => b.appointment_time.localeCompare(a.appointment_time));
                         const isToday = isSameDay(day, new Date());
                         return (
                             <div key={day.toISOString()} className={`bg-white border rounded-lg shadow-sm overflow-hidden flex flex-col min-h-[160px] ${isToday ? "ring-2 ring-primary border-transparent" : ""}`}>
