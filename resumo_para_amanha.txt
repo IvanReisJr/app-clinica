@@ -1,0 +1,26 @@
+CONTEXTO DO PROJETO - SISTEMA DE CLÍNICA (MEDTRACE)
+
+ESTADO ATUAL (09/03/2026):
+1. BACKEND: Django REST Framework com PostgreSQL (via Docker).
+2. FRONTEND: Vite/React, Tailwind CSS, Shadcn UI, TanStack Query.
+3. RBAC (Controle de Acesso): Implementado com cargos (admin, receptionist, doctor, enfermagem, farmacia, financeiro, painel). Menu lateral e botões protegidos por permissões dinâmicas.
+4. LOGIN: Corrigido fluxo de carregamento de perfil. O redirecionamento só ocorre após o fetchMe() bem-sucedido.
+5. DASHBOARD: Funcional com dados reais do banco (Consultas hoje, Pacientes, Alertas de estoque). Gráfico com eixo Y dinâmico e lista de atendimentos recentes limitada a 3 itens com scroll.
+6. UI: Nomes de cargos em Português unificados via constants/roles.ts.
+
+PRÓXIMAS PRIORIDADES (ORDEM DE ATAQUE):
+1. RELATÓRIOS: Exportação PDF/Excel para Médicos, Atendimentos e Estoque (Kardex).
+2. PAINEL DE CHAMADA: Tela em modo quiosque (/painel-chamada) com aviso sonoro e animação para recepção (TV).
+3. TRIAGEM: Fluxo de registro de sinais vitais e prontuário integrado.
+4. DEPLOY EM PRODUÇÃO: Instruir o usuário na transição para o servidor Docker real (ajuste de IPs no api.ts).
+
+DICAS PARA CONTINUIDADE:
+- Mantenha a estética "Premium Navy/Blue" (Slates e Blues).
+- Sempre use o hook 'useCan' para proteções de UI.
+- Prefira 'multi_replace_file_content' para edições no frontend.
+- Tradução de cargos SEMPRE via roles.ts.
+- O projeto usa Docker Compose isolando o Banco (porta 5440 no host -> 5432 interna) para evitar conflitos locais.
+
+GUIA DE DOCKER NO SERVIDOR:
+- Clonar repo -> Editar api.ts (IP do Servidor) -> docker-compose up -d --build -> migrate -> createsuperuser.
+- Portas: 5173 (Front), 8001 (API).
