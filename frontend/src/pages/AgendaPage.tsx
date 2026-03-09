@@ -169,7 +169,10 @@ export function AgendaPage() {
     // Derived states
     // Para simplificar a semana na UI
     const filteredAppts = view === 'week'
-        ? appts.filter(a => new Date(a.appointment_date + 'T12:00:00') >= weekStart && new Date(a.appointment_date + 'T12:00:00') <= addDays(weekStart, 6))
+        ? appts.filter(a => {
+            const d = new Date(a.appointment_date + 'T12:00:00');
+            return d >= weekStart && d < addDays(weekStart, 7); // O domingo vai até o fim.
+        })
         : appts;
 
     return (

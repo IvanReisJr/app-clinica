@@ -13,7 +13,8 @@ import api from '../api';
 
 const patientSchema = z.object({
     full_name: z.string().min(5, 'Nome completo deve ter no mínimo 5 caracteres'),
-    cpf: z.string().regex(/^\d{11}$/, 'CPF deve conter exatamente 11 números sem máscara'),
+    cpf: z.string()
+        .regex(/(^\d{11}$)|(^\d{3}\.\d{3}\.\d{3}\-\d{2}$)/, 'CPF deve conter 11 números ou o formato 000.000.000-00'),
     date_of_birth: z.string().optional().or(z.literal('')),
     gender: z.string().min(1, 'O sexo é obrigatório'),
     phone: z.string().min(10, 'O telefone é obrigatório com DDD'),
@@ -158,9 +159,15 @@ export function NewPatient() {
                                     <Input
                                         id="cpf"
                                         placeholder="000.000.000-00"
-                                        maxLength={11}
+                                        maxLength={14}
                                         className="h-12 text-base bg-white font-mono border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
                                         {...form.register('cpf')}
+                                        onChange={(e) => {
+                                            // Máscara ultra-simples inline enquanto digita (apenas visual na caixinha, enviaremos os pontos)
+                                            // Como o regex do Zod que o usuário tinha antes pedia \d{11}, o certo é aceitar string com ou sem ponto
+                                            // Vamos resolver no Zod acima alterando o pattern para aceitar os separadores.
+                                            form.setValue('cpf', e.target.value);
+                                        }}
                                         aria-invalid={!!errors.cpf}
                                     />
                                     <FieldError errors={[errors.cpf]} />
