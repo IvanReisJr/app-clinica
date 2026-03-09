@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Patient, MedicalRecord
+from .models import Patient
 from users.serializers import CustomUserSerializer
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -14,9 +14,4 @@ class PatientSerializer(serializers.ModelSerializer):
             'emergency_contact', 'notes', 'photo', 'created_at'
         ]
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    doctor_name = serializers.CharField(source='doctor.get_full_name', read_only=True)
 
-    class Meta:
-        model = MedicalRecord
-        fields = ['id', 'patient', 'doctor', 'doctor_name', 'notes', 'created_at']

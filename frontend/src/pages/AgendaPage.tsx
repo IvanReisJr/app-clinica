@@ -110,8 +110,18 @@ export function AgendaPage() {
         },
         onError: (error: any) => {
             console.error("Payload rejeitado:", error.response?.data);
-            const msg = error.response?.data ? JSON.stringify(error.response.data).substring(0, 100) : "Erro interno";
-            toast.error(`Falha do Servidor: ${msg}`);
+            const data = error.response?.data;
+            let msg = "Erro interno no servidor.";
+
+            if (data) {
+                if (data.non_field_errors && data.non_field_errors.length > 0) {
+                    msg = data.non_field_errors[0];
+                } else if (typeof data === 'object') {
+                    const firstKey = Object.keys(data)[0];
+                    msg = Array.isArray(data[firstKey]) ? `${firstKey}: ${data[firstKey][0]}` : JSON.stringify(data).substring(0, 100);
+                }
+            }
+            toast.error(msg, { duration: 6000 });
         }
     });
 

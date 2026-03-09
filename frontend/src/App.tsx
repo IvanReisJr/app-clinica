@@ -10,6 +10,9 @@ import { NewPatient } from './pages/NewPatient';
 import { Professionals } from './pages/Professionals';
 import { NewProfessional } from './pages/NewProfessional';
 import { AgendaPage } from './pages/AgendaPage';
+import { FilaAtendimentoPage } from './pages/FilaAtendimentoPage';
+import { AtendimentoPage } from './pages/AtendimentoPage';
+import { ProntuarioPage } from './pages/ProntuarioPage';
 import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
@@ -29,10 +32,14 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="patients" element={<Patients />} />
                 <Route path="patients/new" element={<NewPatient />} />
+                <Route path="patients/edit/:id" element={<NewPatient />} />
                 <Route path="professionals" element={<Professionals />} />
                 <Route path="professionals/new" element={<NewProfessional />} />
                 <Route path="professionals/:id/edit" element={<NewProfessional />} />
                 <Route path="appointments" element={<AgendaPage />} />
+                <Route path="queue" element={<FilaAtendimentoPage />} />
+                <Route path="records" element={<ProntuarioPage />} />
+                <Route path="records/:id" element={<AtendimentoPage />} />
               </Route>
             </Route>
 

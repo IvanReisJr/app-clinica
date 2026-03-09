@@ -8,7 +8,8 @@ from django.conf.urls.static import static
 
 # Importando as views das apps
 from users.views import CustomUserViewSet
-from patients.views import PatientViewSet, MedicalRecordViewSet
+from patients.views import PatientViewSet
+from medical_records.views import MedicalRecordViewSet, PrescriptionViewSet
 from appointments.views import AppointmentViewSet
 from professionals.views import ProfessionalViewSet
 
@@ -16,6 +17,7 @@ router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
 router.register(r'patients', PatientViewSet, basename='patient')
 router.register(r'records', MedicalRecordViewSet, basename='record')
+router.register(r'prescriptions', PrescriptionViewSet, basename='prescription')
 router.register(r'appointments', AppointmentViewSet, basename='appointment')
 router.register(r'professionals', ProfessionalViewSet, basename='professional')
 

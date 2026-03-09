@@ -1,22 +1,15 @@
-from rest_framework import viewsets
-from .models import Patient, MedicalRecord
-from .serializers import PatientSerializer, MedicalRecordSerializer
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from .models import Patient
+from .serializers import PatientSerializer
 
 class PatientViewSet(viewsets.ModelViewSet):
-    queryset = Patient.objects.all().order_by('-created_at')
+    queryset = Patient.objects.all().order_by('full_name')
     serializer_class = PatientSerializer
     
-    # Poderíamos adicionar filters depois, ex:
-    # filterset_fields = ['cpf', 'full_name']
-
-class MedicalRecordViewSet(viewsets.ModelViewSet):
-    queryset = MedicalRecord.objects.all().order_by('-created_at')
-    serializer_class = MedicalRecordSerializer
-
-    def get_queryset(self):
-        # Filtra os prontuários por paciente, se passado na URL (?patient_id=X)
-        queryset = super().get_queryset()
-        patient_id = self.request.query_params.get('patient_id')
-        if patient_id is not None:
-            queryset = queryset.filter(patient_id=patient_id)
-        return queryset
+    def destroy(self, request, *args, **kwargs):
+        # Soft Delete
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -21,16 +21,10 @@ class Patient(models.Model):
     emergency_contact = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     photo = models.ImageField(upload_to='patients/photos/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.full_name
 
-class MedicalRecord(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
-    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.RESTRICT)
-    notes = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Record for {self.patient.full_name} on {self.created_at.date()}"

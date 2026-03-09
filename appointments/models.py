@@ -25,8 +25,12 @@ class Appointment(models.Model):
     notes = models.TextField(blank=True, null=True)
     attendance_number = models.IntegerField(blank=True, null=True, help_text="Número da senha/fila de atendimento")
     room = models.CharField(max_length=50, blank=True, null=True, help_text="Consultório/Sala")
-    
-    is_encaixe = models.BooleanField(default=False)
+    # Timestamps do fluxo clínico de atendimento
+    attendance_started_at = models.DateTimeField(null=True, blank=True, verbose_name="Início do Atendimento")
+    attendance_finished_at = models.DateTimeField(null=True, blank=True, verbose_name="Fim do Atendimento")
+
+    # Flag
+    is_encaixe = models.BooleanField(default=False, verbose_name="É Encaixe?")
     confirmed_at = models.DateTimeField(blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -37,6 +41,13 @@ class Appointment(models.Model):
         ordering = ['appointment_date', 'appointment_time']
         verbose_name = 'Agendamento'
         verbose_name_plural = 'Agendamentos'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['professional', 'appointment_date', 'appointment_time'],
+                condition=models.Q(is_encaixe=False) & ~models.Q(status__in=['cancelado', 'faltou']),
+                name='unique_active_appointment_no_encaixe'
+            )
+        ]
 
     def __str__(self):
         prof_name = self.professional.name if self.professional else "Sem Profissional"

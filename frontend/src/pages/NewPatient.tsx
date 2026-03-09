@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, UserPlus, FileText, Camera } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Loader2, UserPlus, FileText, Camera, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import api from '../api';
+import { toast } from 'sonner';
 
 const patientSchema = z.object({
     full_name: z.string().min(5, 'Nome completo deve ter no mínimo 5 caracteres'),
@@ -28,18 +29,21 @@ const patientSchema = z.object({
 type PatientForm = z.infer<typeof patientSchema>;
 
 export function NewPatient() {
+    const { id } = useParams();
+    const isEdit = Boolean(id);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setPhotoFile(file);
-            setPhotoPreview(URL.createObjectURL(file));
-        }
-    };
+    const { data: existingPatient, isLoading: isLoadingPatient } = useQuery({
+        queryKey: ['patient', id],
+        queryFn: async () => {
+            const res = await api.get(`v1/patients/${id}/`);
+            return res.data;
+        },
+        enabled: isEdit,
+    });
 
     const form = useForm<PatientForm>({
         resolver: zodResolver(patientSchema),
@@ -49,33 +53,67 @@ export function NewPatient() {
             address: '', insurance: '', emergency_contact: '', notes: ''
         }
     });
+
+    useEffect(() => {
+        if (existingPatient) {
+            form.reset({
+                full_name: existingPatient.full_name || '',
+                cpf: existingPatient.cpf || '',
+                date_of_birth: existingPatient.date_of_birth || '',
+                gender: existingPatient.gender || '',
+                phone: existingPatient.phone || '',
+                email: existingPatient.email || '',
+                address: existingPatient.address || '',
+                insurance: existingPatient.insurance || '',
+                emergency_contact: existingPatient.emergency_contact || '',
+                notes: existingPatient.notes || ''
+            });
+            if (existingPatient.photo) {
+                setPhotoPreview(existingPatient.photo);
+            }
+        }
+    }, [existingPatient, form]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
     const { errors } = form.formState;
 
     const mutation = useMutation({
-        mutationFn: (newPatient: PatientForm) => {
+        mutationFn: (data: PatientForm) => {
             const formData = new FormData();
-
-            // Adicionar todos os campos de texto no Form
-            Object.keys(newPatient).forEach(key => {
-                const value = (newPatient as any)[key];
+            Object.keys(data).forEach(key => {
+                const value = (data as any)[key];
                 if (value !== undefined && value !== null && value !== '') {
                     formData.append(key, value);
                 }
             });
 
-            // Injetar arquivo binário da foto se existir
             if (photoFile) {
                 formData.append('photo', photoFile);
             }
 
-            return api.post('v1/patients/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            if (isEdit) {
+                return api.patch(`v1/patients/${id}/`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            } else {
+                return api.post('v1/patients/', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            }
         },
         onSuccess: () => {
+            toast.success(isEdit ? "Dados do paciente atualizados!" : "Novo paciente cadastrado com sucesso!");
             queryClient.invalidateQueries({ queryKey: ['patients'] });
+            if (isEdit) {
+                queryClient.invalidateQueries({ queryKey: ['patient', id] });
+            }
             navigate('/patients');
         },
     });
@@ -84,18 +122,37 @@ export function NewPatient() {
         mutation.mutate(data);
     };
 
+    if (isEdit && isLoadingPatient) {
+        return (
+            <div className="flex h-64 items-center justify-center">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-500">
-            <div className="flex items-center gap-4 border-b pb-6">
-                <Button variant="outline" size="icon" render={<Link to="/patients" />} className="rounded-full shadow-sm hover:bg-slate-100">
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-500 pb-12">
+            <div className="flex items-center gap-4 border-b pb-6 text-slate-900">
+                <Button variant="outline" size="icon" render={<Link to="/patients" />} className="rounded-full shadow-sm hover:bg-slate-100 flex items-center justify-center">
+                    <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-                        <UserPlus className="h-8 w-8 text-blue-600" />
-                        Abertura de Prontuário
+                    <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
+                        {isEdit ? (
+                            <>
+                                <UserCog className="h-8 w-8 text-blue-600" />
+                                Alterar Prontuário
+                            </>
+                        ) : (
+                            <>
+                                <UserPlus className="h-8 w-8 text-blue-600" />
+                                Abertura de Prontuário
+                            </>
+                        )}
                     </h2>
-                    <p className="text-slate-500 font-medium text-lg mt-1">Insira os dados cadastrais do novo paciente no sistema da clínica.</p>
+                    <p className="text-slate-500 font-medium text-lg mt-1">
+                        {isEdit ? `Editando as informações de ${existingPatient?.full_name}` : 'Insira os dados cadastrais do novo paciente no sistema da clínica.'}
+                    </p>
                 </div>
             </div>
 
@@ -110,21 +167,20 @@ export function NewPatient() {
                 <CardContent className="p-8">
                     {mutation.isError && (
                         <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-semibold rounded-r-md shadow-sm">
-                            Ocorreu um erro ao salvar o paciente. Verifique se o CPF já está cadastrado ou tente novamente.
+                            Ocorreu um erro ao salvar o paciente. Verifique os dados e tente novamente.
                         </div>
                     )}
 
-                    <div className="flex flex-col items-center justify-center mb-10 mt-2">
+                    <div className="flex flex-col items-center justify-center mb-10 mt-2 text-slate-500">
                         <div className="relative group w-32 h-32 rounded-full overflow-hidden border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 transition-colors cursor-pointer flex flex-col items-center justify-center shadow-sm">
                             {photoPreview ? (
                                 <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
-                                <div className="flex flex-col items-center text-slate-400">
+                                <div className="flex flex-col items-center">
                                     <UserPlus className="h-10 w-10 mb-1 opacity-40 text-blue-500" />
                                 </div>
                             )}
 
-                            {/* Overlay Preto Hover */}
                             <div className="absolute inset-x-0 bottom-0 top-auto h-1/3 bg-slate-900/60 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100">
                                 <Camera className="h-5 w-5 text-white" />
                             </div>
@@ -136,7 +192,7 @@ export function NewPatient() {
                                 onChange={handleFileChange}
                             />
                         </div>
-                        <span className="text-sm font-semibold text-slate-500 mt-3 tracking-tight">Clique para adicionar foto</span>
+                        <span className="text-sm font-semibold mt-3 tracking-tight">Clique para {isEdit ? 'alterar' : 'adicionar'} foto</span>
                     </div>
 
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -155,19 +211,13 @@ export function NewPatient() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <Field data-invalid={!!errors.cpf}>
-                                    <FieldLabel htmlFor="cpf" className="text-slate-700 font-semibold">CPF Formal (só números) *</FieldLabel>
+                                    <FieldLabel htmlFor="cpf" className="text-slate-700 font-semibold">CPF Formal *</FieldLabel>
                                     <Input
                                         id="cpf"
                                         placeholder="000.000.000-00"
                                         maxLength={14}
                                         className="h-12 text-base bg-white font-mono border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
                                         {...form.register('cpf')}
-                                        onChange={(e) => {
-                                            // Máscara ultra-simples inline enquanto digita (apenas visual na caixinha, enviaremos os pontos)
-                                            // Como o regex do Zod que o usuário tinha antes pedia \d{11}, o certo é aceitar string com ou sem ponto
-                                            // Vamos resolver no Zod acima alterando o pattern para aceitar os separadores.
-                                            form.setValue('cpf', e.target.value);
-                                        }}
                                         aria-invalid={!!errors.cpf}
                                     />
                                     <FieldError errors={[errors.cpf]} />
@@ -218,7 +268,7 @@ export function NewPatient() {
                             </div>
 
                             <Field data-invalid={!!errors.email}>
-                                <FieldLabel htmlFor="email" className="text-slate-700 font-semibold">E-mail Profissional/Pessoal</FieldLabel>
+                                <FieldLabel htmlFor="email" className="text-slate-700 font-semibold">E-mail</FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -272,7 +322,7 @@ export function NewPatient() {
                                 <FieldLabel htmlFor="notes" className="text-slate-700 font-semibold">Observações Iniciais</FieldLabel>
                                 <textarea
                                     id="notes"
-                                    placeholder="Anotações gerais, alergias perigosas que impedem medicação rápida ou preferências..."
+                                    placeholder="Anotações gerais, alergias perigosas ou preferências..."
                                     className="flex min-h-[100px] w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm resize-y"
                                     {...form.register('notes')}
                                     aria-invalid={!!errors.notes}
@@ -283,18 +333,18 @@ export function NewPatient() {
 
                         <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
                             <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" render={<Link to="/patients" />}>
-                                Cancelar Inserção
+                                Cancelar
                             </Button>
                             <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-bold text-base" disabled={mutation.isPending}>
                                 {mutation.isPending ? (
                                     <>
                                         <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                                        Processando...
+                                        Salvando...
                                     </>
                                 ) : (
                                     <>
                                         <Save className="mr-3 h-5 w-5" />
-                                        Efetivar Registro do Paciente
+                                        {isEdit ? 'Salvar Alterações' : 'Efetivar Registro do Paciente'}
                                     </>
                                 )}
                             </Button>
