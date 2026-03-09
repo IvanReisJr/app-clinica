@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import api from '../api';
 
 const professionalSchema = z.object({
@@ -17,6 +18,7 @@ const professionalSchema = z.object({
     crm: z.string().optional().or(z.literal('')),
     phone: z.string().optional().or(z.literal('')),
     email: z.string().email('E-mail incorreto').optional().or(z.literal('')),
+    is_active: z.boolean(),
 });
 
 type ProfessionalForm = z.infer<typeof professionalSchema>;
@@ -29,7 +31,7 @@ export function NewProfessional() {
 
     const form = useForm<ProfessionalForm>({
         resolver: zodResolver(professionalSchema),
-        defaultValues: { name: '', specialty: '', crm: '', phone: '', email: '' }
+        defaultValues: { name: '', specialty: '', crm: '', phone: '', email: '', is_active: true }
     });
     const { errors } = form.formState;
 
@@ -52,6 +54,7 @@ export function NewProfessional() {
                 crm: profData.crm || '',
                 phone: profData.phone || '',
                 email: profData.email || '',
+                is_active: profData.is_active !== undefined ? profData.is_active : true,
             });
         }
     }, [isEditing, profData, form]);
@@ -182,6 +185,30 @@ export function NewProfessional() {
                                             aria-invalid={!!errors.email}
                                         />
                                         <FieldError errors={[errors.email]} />
+                                    </Field>
+                                </div>
+
+                                <div className="mt-6 pt-6 border-t border-slate-100">
+                                    <Field data-invalid={!!errors.is_active}>
+                                        <div className="flex flex-row items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm">
+                                            <div className="space-y-1.5">
+                                                <FieldLabel className="text-base font-bold text-slate-800">Status do Profissional (Ativo / Inativo)</FieldLabel>
+                                                <p className="text-sm text-slate-500 font-medium">
+                                                    Desligue esta opção em vez de excluir caso o especialista se ausente, preservando o histórico de consultas passadas.
+                                                </p>
+                                            </div>
+                                            <Controller
+                                                control={form.control}
+                                                name="is_active"
+                                                render={({ field }) => (
+                                                    <Switch
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                        className="data-[state=checked]:bg-emerald-500"
+                                                    />
+                                                )}
+                                            />
+                                        </div>
                                     </Field>
                                 </div>
                             </FieldGroup>
