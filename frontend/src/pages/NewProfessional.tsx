@@ -186,28 +186,26 @@ export function NewProfessional() {
                                         />
                                         <FieldError errors={[errors.email]} />
                                     </Field>
-                                </div>
 
-                                <div className="mt-6 pt-6 border-t border-slate-100">
                                     <Field data-invalid={!!errors.is_active}>
-                                        <div className="flex flex-row items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-6 shadow-sm">
-                                            <div className="space-y-1.5">
-                                                <FieldLabel className="text-base font-bold text-slate-800">Status do Profissional (Ativo / Inativo)</FieldLabel>
-                                                <p className="text-sm text-slate-500 font-medium">
-                                                    Desligue esta opção em vez de excluir caso o especialista se ausente, preservando o histórico de consultas passadas.
-                                                </p>
+                                        <div className="flex flex-col space-y-2 h-12 bg-white rounded-md border border-slate-300 p-2 justify-center shadow-sm">
+                                            <div className="flex items-center justify-between px-2">
+                                                <FieldLabel className="text-slate-700 font-semibold mb-0 cursor-pointer" htmlFor="status-switch">
+                                                    Status (Ativo/Inativo)
+                                                </FieldLabel>
+                                                <Controller
+                                                    control={form.control}
+                                                    name="is_active"
+                                                    render={({ field }) => (
+                                                        <Switch
+                                                            id="status-switch"
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                            className="data-[state=checked]:bg-emerald-500 scale-90"
+                                                        />
+                                                    )}
+                                                />
                                             </div>
-                                            <Controller
-                                                control={form.control}
-                                                name="is_active"
-                                                render={({ field }) => (
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                        className="data-[state=checked]:bg-emerald-500"
-                                                    />
-                                                )}
-                                            />
                                         </div>
                                     </Field>
                                 </div>
