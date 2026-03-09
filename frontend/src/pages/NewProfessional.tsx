@@ -204,7 +204,7 @@ export function NewProfessional() {
                                                             id="status-switch"
                                                             checked={field.value}
                                                             onCheckedChange={field.onChange}
-                                                            className="data-checked:!bg-emerald-500 data-unchecked:!bg-rose-600 shadow-sm scale-150 mr-2"
+                                                            className={`shadow-sm scale-150 mx-2 transition-colors ${field.value ? '!bg-emerald-500' : '!bg-rose-500'}`}
                                                         />
                                                     )}
                                                 />

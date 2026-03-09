@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import api from '../api';
 
 interface Professional {
@@ -44,6 +45,20 @@ export function Professionals() {
         if (window.confirm(`Tem certeza que deseja excluir o profissional ${name}?`)) {
             deleteMutation.mutate(id);
         }
+    };
+
+    const toggleStatusMutation = useMutation({
+        mutationFn: async ({ id, is_active }: { id: number, is_active: boolean }) => {
+            await api.patch(`v1/professionals/${id}/`, { is_active });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['professionals'] });
+        }
+    });
+
+    const handleToggleStatus = (e: React.MouseEvent, id: number, currentStatus: boolean) => {
+        e.stopPropagation();
+        toggleStatusMutation.mutate({ id, is_active: !currentStatus });
     };
 
     return (
@@ -123,7 +138,16 @@ export function Professionals() {
                                         )}
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <div className="flex items-center justify-center gap-1">
+                                        <div className="flex items-center justify-center gap-3">
+                                            <div className="flex items-center" title={prof.is_active ? "Inativar Profissional" : "Ativar Profissional"} onClick={(e) => e.stopPropagation()}>
+                                                <Switch
+                                                    checked={prof.is_active}
+                                                    onCheckedChange={() => handleToggleStatus(null as any, prof.id, prof.is_active)}
+                                                    className={`shadow-sm scale-110 ${prof.is_active ? '!bg-emerald-500' : '!bg-rose-500'}`}
+                                                    disabled={toggleStatusMutation.isPending}
+                                                />
+                                            </div>
+                                            <div className="h-4 w-px bg-slate-200 mx-1"></div>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
