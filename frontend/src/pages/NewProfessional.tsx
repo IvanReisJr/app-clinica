@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import api from '../api';
 
 const professionalSchema = z.object({
@@ -188,24 +187,32 @@ export function NewProfessional() {
                                     </Field>
 
                                     <Field data-invalid={!!errors.is_active}>
-                                        <div className="flex flex-col space-y-2 h-12 bg-white rounded-md border border-slate-300 p-2 justify-center shadow-sm">
-                                            <div className="flex items-center justify-between px-2">
-                                                <FieldLabel className="text-slate-700 font-semibold mb-0 cursor-pointer" htmlFor="status-switch">
-                                                    Status (Ativo/Inativo)
-                                                </FieldLabel>
-                                                <Controller
-                                                    control={form.control}
-                                                    name="is_active"
-                                                    render={({ field }) => (
-                                                        <Switch
-                                                            id="status-switch"
-                                                            checked={field.value}
-                                                            onCheckedChange={field.onChange}
-                                                            className="data-[state=checked]:bg-emerald-500 scale-90"
-                                                        />
-                                                    )}
-                                                />
-                                            </div>
+                                        <div className="flex flex-col space-y-3 h-[72px] bg-white rounded-md border border-slate-300 p-2 justify-center shadow-sm">
+                                            <FieldLabel className="text-slate-700 font-semibold px-1 mb-0" htmlFor="status-switch">
+                                                Status Operacional
+                                            </FieldLabel>
+                                            <Controller
+                                                control={form.control}
+                                                name="is_active"
+                                                render={({ field }) => (
+                                                    <div className="flex bg-slate-100 p-1 rounded-md w-full">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => field.onChange(true)}
+                                                            className={`flex-1 py-1.5 px-3 rounded text-sm font-semibold transition-all ${field.value ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-700'}`}
+                                                        >
+                                                            Ativo
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => field.onChange(false)}
+                                                            className={`flex-1 py-1.5 px-3 rounded text-sm font-semibold transition-all ${!field.value ? 'bg-white text-rose-700 shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-700'}`}
+                                                        >
+                                                            Inativo
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            />
                                         </div>
                                     </Field>
                                 </div>
