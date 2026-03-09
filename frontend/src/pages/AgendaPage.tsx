@@ -206,14 +206,22 @@ export function AgendaPage() {
                                 <div className="space-y-1">
                                     <Label>Paciente *</Label>
                                     <Select value={form.patient || ""} onValueChange={(v) => setForm({ ...form, patient: v || "" })}>
-                                        <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecione...">
+                                                {form.patient ? patients.find(p => p.id.toString() === form.patient)?.full_name : ""}
+                                            </SelectValue>
+                                        </SelectTrigger>
                                         <SelectContent>{patients.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.full_name}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-1">
                                     <Label>Profissional Especialista</Label>
                                     <Select value={form.professional || ""} onValueChange={(v) => setForm({ ...form, professional: v || "" })}>
-                                        <SelectTrigger><SelectValue placeholder="Selecione o profissional..." /></SelectTrigger>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecione o profissional...">
+                                                {form.professional && form.professional !== "_none" ? professionals.find(p => p.id.toString() === form.professional)?.name : form.professional === "_none" ? "Sem Profissional Específico" : ""}
+                                            </SelectValue>
+                                        </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="_none">Sem Profissional Específico</SelectItem>
                                             {professionals.map(p => <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>)}
@@ -228,7 +236,11 @@ export function AgendaPage() {
                                     <div className="space-y-1">
                                         <Label>Status</Label>
                                         <Select value={form.status || ""} onValueChange={(v) => setForm({ ...form, status: v || "" })}>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Status">
+                                                    {form.status ? statusLabels[form.status] : ""}
+                                                </SelectValue>
+                                            </SelectTrigger>
                                             <SelectContent>{statusOptions.map(s => <SelectItem key={s} value={s}>{statusLabels[s]}</SelectItem>)}</SelectContent>
                                         </Select>
                                     </div>
