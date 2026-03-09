@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -42,20 +43,18 @@ export function NewProfessional() {
         enabled: isEditing,
     });
 
-    // Populando os campos assim que a query resolve ou é ativada
-    import('react').then(React => {
-        React.useEffect(() => {
-            if (isEditing && profData) {
-                form.reset({
-                    name: profData.name || '',
-                    specialty: profData.specialty || '',
-                    crm: profData.crm || '',
-                    phone: profData.phone || '',
-                    email: profData.email || '',
-                });
-            }
-        }, [isEditing, profData, form]);
-    });
+    // Populando os campos assim que a query resolve
+    useEffect(() => {
+        if (isEditing && profData) {
+            form.reset({
+                name: profData.name || '',
+                specialty: profData.specialty || '',
+                crm: profData.crm || '',
+                phone: profData.phone || '',
+                email: profData.email || '',
+            });
+        }
+    }, [isEditing, profData, form]);
 
     const mutation = useMutation({
         mutationFn: (newProf: ProfessionalForm) => {
