@@ -51,13 +51,26 @@ export function Professionals() {
         mutationFn: async ({ id, is_active }: { id: number, is_active: boolean }) => {
             await api.patch(`v1/professionals/${id}/`, { is_active });
         },
-        onSuccess: () => {
+        onMutate: async ({ id, is_active }) => {
+            await queryClient.cancelQueries({ queryKey: ['professionals'] });
+            const previousProfessionals = queryClient.getQueryData(['professionals']);
+            queryClient.setQueryData(['professionals'], (old: Professional[] | undefined) => {
+                if (!old) return old;
+                return old.map(prof => prof.id === id ? { ...prof, is_active } : prof);
+            });
+            return { previousProfessionals };
+        },
+        onError: (_err, _variables, context) => {
+            if (context?.previousProfessionals) {
+                queryClient.setQueryData(['professionals'], context.previousProfessionals);
+            }
+        },
+        onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['professionals'] });
         }
     });
 
-    const handleToggleStatus = (e: React.MouseEvent, id: number, currentStatus: boolean) => {
-        e.stopPropagation();
+    const handleToggleStatus = (id: number, currentStatus: boolean) => {
         toggleStatusMutation.mutate({ id, is_active: !currentStatus });
     };
 
@@ -142,9 +155,9 @@ export function Professionals() {
                                             <div className="flex items-center" title={prof.is_active ? "Inativar Profissional" : "Ativar Profissional"} onClick={(e) => e.stopPropagation()}>
                                                 <Switch
                                                     checked={prof.is_active}
-                                                    onCheckedChange={() => handleToggleStatus(null as any, prof.id, prof.is_active)}
+                                                    onCheckedChange={() => handleToggleStatus(prof.id, prof.is_active)}
                                                     className={`shadow-sm scale-110 ${prof.is_active ? '!bg-emerald-500' : '!bg-rose-500'}`}
-                                                    disabled={toggleStatusMutation.isPending}
+                                                    disabled={toggleStatusMutation.isPending && toggleStatusMutation.variables?.id === prof.id}
                                                 />
                                             </div>
                                             <div className="h-4 w-px bg-slate-200 mx-1"></div>
