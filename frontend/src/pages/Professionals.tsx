@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Loader2, UserCog, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, Plus, Loader2, UserCog, Trash2, Edit } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,6 +20,7 @@ interface Professional {
 
 export function Professionals() {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const { data: professionals, isLoading } = useQuery<Professional[]>({
         queryKey: ['professionals'],
@@ -122,16 +123,27 @@ export function Professionals() {
                                         )}
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 px-2"
-                                            onClick={(e) => handleDelete(e, prof.id, prof.name)}
-                                            disabled={deleteMutation.isPending}
-                                            title="Excluir Profissional"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+                                        <div className="flex items-center justify-center gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-slate-500 hover:text-blue-600 hover:bg-blue-50 px-2"
+                                                onClick={(e) => { e.stopPropagation(); navigate(`/professionals/${prof.id}/edit`); }}
+                                                title="Editar Profissional"
+                                            >
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 px-2"
+                                                onClick={(e) => handleDelete(e, prof.id, prof.name)}
+                                                disabled={deleteMutation.isPending}
+                                                title="Excluir Profissional"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

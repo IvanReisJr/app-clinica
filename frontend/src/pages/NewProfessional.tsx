@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, UserPlus, Stethoscope } from 'lucide-react';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Loader2, UserPlus, Stethoscope, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
@@ -23,6 +23,8 @@ type ProfessionalForm = z.infer<typeof professionalSchema>;
 export function NewProfessional() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { id } = useParams<{ id: string }>();
+    const isEditing = !!id;
 
     const form = useForm<ProfessionalForm>({
         resolver: zodResolver(professionalSchema),
@@ -30,8 +32,36 @@ export function NewProfessional() {
     });
     const { errors } = form.formState;
 
+    // Se estiver editando, busca os dados da API para preencher o form e manter reatividade
+    const { isLoading: isLoadingProf, data: profData } = useQuery({
+        queryKey: ['professional', id],
+        queryFn: async () => {
+            const response = await api.get(`v1/professionals/${id}/`);
+            return response.data;
+        },
+        enabled: isEditing,
+    });
+
+    // Populando os campos assim que a query resolve ou é ativada
+    import('react').then(React => {
+        React.useEffect(() => {
+            if (isEditing && profData) {
+                form.reset({
+                    name: profData.name || '',
+                    specialty: profData.specialty || '',
+                    crm: profData.crm || '',
+                    phone: profData.phone || '',
+                    email: profData.email || '',
+                });
+            }
+        }, [isEditing, profData, form]);
+    });
+
     const mutation = useMutation({
         mutationFn: (newProf: ProfessionalForm) => {
+            if (isEditing) {
+                return api.put(`v1/professionals/${id}/`, newProf);
+            }
             return api.post('v1/professionals/', newProf);
         },
         onSuccess: () => {
@@ -52,10 +82,12 @@ export function NewProfessional() {
                 </Button>
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-                        <UserPlus className="h-8 w-8 text-blue-600" />
-                        Cadastro de Especialista
+                        {isEditing ? <Edit className="h-8 w-8 text-blue-600" /> : <UserPlus className="h-8 w-8 text-blue-600" />}
+                        {isEditing ? 'Atualizar Especialista' : 'Cadastro de Especialista'}
                     </h2>
-                    <p className="text-slate-500 font-medium text-lg mt-1">Insira os credenciais do novo profissional de saúde.</p>
+                    <p className="text-slate-500 font-medium text-lg mt-1">
+                        {isEditing ? 'Modifique os dados do profissional e salve para refletir no painel.' : 'Insira os credenciais do novo profissional de saúde.'}
+                    </p>
                 </div>
             </div>
 
@@ -81,93 +113,100 @@ export function NewProfessional() {
                         </div>
                     )}
 
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FieldGroup>
-                            <Field data-invalid={!!errors.name}>
-                                <FieldLabel htmlFor="name" className="text-slate-700 font-semibold">Dr. / Nome Completo *</FieldLabel>
-                                <Input
-                                    id="name"
-                                    placeholder="Ex: Dr. Roberto Silveira"
-                                    className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
-                                    {...form.register('name')}
-                                    aria-invalid={!!errors.name}
-                                />
-                                <FieldError errors={[errors.name]} />
-                            </Field>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Field data-invalid={!!errors.specialty}>
-                                    <FieldLabel htmlFor="specialty" className="text-slate-700 font-semibold">Especialidade Principal</FieldLabel>
-                                    <Input
-                                        id="specialty"
-                                        placeholder="Ortopedista, Dermatologista..."
-                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
-                                        {...form.register('specialty')}
-                                        aria-invalid={!!errors.specialty}
-                                    />
-                                    <FieldError errors={[errors.specialty]} />
-                                </Field>
-
-                                <Field data-invalid={!!errors.crm}>
-                                    <FieldLabel htmlFor="crm" className="text-slate-700 font-semibold">Registro de Classe (CRM/Coren)</FieldLabel>
-                                    <Input
-                                        id="crm"
-                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
-                                        placeholder="Ex: 50920-SP"
-                                        {...form.register('crm')}
-                                        aria-invalid={!!errors.crm}
-                                    />
-                                    <FieldError errors={[errors.crm]} />
-                                </Field>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Field data-invalid={!!errors.phone}>
-                                    <FieldLabel htmlFor="phone" className="text-slate-700 font-semibold">Telefone de Contato Profissional</FieldLabel>
-                                    <Input
-                                        id="phone"
-                                        placeholder="(DD) 90000-0000"
-                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
-                                        {...form.register('phone')}
-                                        aria-invalid={!!errors.phone}
-                                    />
-                                    <FieldError errors={[errors.phone]} />
-                                </Field>
-
-                                <Field data-invalid={!!errors.email}>
-                                    <FieldLabel htmlFor="email" className="text-slate-700 font-semibold">E-mail Corporativo</FieldLabel>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="medico@clinica.com"
-                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
-                                        {...form.register('email')}
-                                        aria-invalid={!!errors.email}
-                                    />
-                                    <FieldError errors={[errors.email]} />
-                                </Field>
-                            </div>
-                        </FieldGroup>
-
-                        <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
-                            <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" render={<Link to="/professionals" />}>
-                                Descartar Edição
-                            </Button>
-                            <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-bold text-base" disabled={mutation.isPending}>
-                                {mutation.isPending ? (
-                                    <>
-                                        <Loader2 className="mr-3 h-5 w-5 animate-spin" />
-                                        Autenticando na base...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="mr-3 h-5 w-5" />
-                                        Consolidar Profissional
-                                    </>
-                                )}
-                            </Button>
+                    {isEditing && isLoadingProf ? (
+                        <div className="flex flex-col items-center justify-center p-12">
+                            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mb-4" />
+                            <p className="text-slate-500 font-medium">Buscando informações ativas do banco de dados...</p>
                         </div>
-                    </form>
+                    ) : (
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <FieldGroup>
+                                <Field data-invalid={!!errors.name}>
+                                    <FieldLabel htmlFor="name" className="text-slate-700 font-semibold">Dr. / Nome Completo *</FieldLabel>
+                                    <Input
+                                        id="name"
+                                        placeholder="Ex: Dr. Roberto Silveira"
+                                        className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                        {...form.register('name')}
+                                        aria-invalid={!!errors.name}
+                                    />
+                                    <FieldError errors={[errors.name]} />
+                                </Field>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <Field data-invalid={!!errors.specialty}>
+                                        <FieldLabel htmlFor="specialty" className="text-slate-700 font-semibold">Especialidade Principal</FieldLabel>
+                                        <Input
+                                            id="specialty"
+                                            placeholder="Ortopedista, Dermatologista..."
+                                            className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                            {...form.register('specialty')}
+                                            aria-invalid={!!errors.specialty}
+                                        />
+                                        <FieldError errors={[errors.specialty]} />
+                                    </Field>
+
+                                    <Field data-invalid={!!errors.crm}>
+                                        <FieldLabel htmlFor="crm" className="text-slate-700 font-semibold">Registro de Classe (CRM/Coren)</FieldLabel>
+                                        <Input
+                                            id="crm"
+                                            className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                            placeholder="Ex: 50920-SP"
+                                            {...form.register('crm')}
+                                            aria-invalid={!!errors.crm}
+                                        />
+                                        <FieldError errors={[errors.crm]} />
+                                    </Field>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <Field data-invalid={!!errors.phone}>
+                                        <FieldLabel htmlFor="phone" className="text-slate-700 font-semibold">Telefone de Contato Profissional</FieldLabel>
+                                        <Input
+                                            id="phone"
+                                            placeholder="(DD) 90000-0000"
+                                            className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                            {...form.register('phone')}
+                                            aria-invalid={!!errors.phone}
+                                        />
+                                        <FieldError errors={[errors.phone]} />
+                                    </Field>
+
+                                    <Field data-invalid={!!errors.email}>
+                                        <FieldLabel htmlFor="email" className="text-slate-700 font-semibold">E-mail Corporativo</FieldLabel>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            placeholder="medico@clinica.com"
+                                            className="h-12 text-base bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 shadow-sm"
+                                            {...form.register('email')}
+                                            aria-invalid={!!errors.email}
+                                        />
+                                        <FieldError errors={[errors.email]} />
+                                    </Field>
+                                </div>
+                            </FieldGroup>
+
+                            <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
+                                <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" render={<Link to="/professionals" />}>
+                                    Descartar Edição
+                                </Button>
+                                <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-bold text-base" disabled={mutation.isPending}>
+                                    {mutation.isPending ? (
+                                        <>
+                                            <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                                            Autenticando na base...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="mr-3 h-5 w-5" />
+                                            {isEditing ? 'Atualizar Profissional' : 'Consolidar Profissional'}
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </form>
+                    )}
                 </CardContent>
             </Card>
         </div>
