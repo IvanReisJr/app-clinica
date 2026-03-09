@@ -7,6 +7,7 @@ from patients.models import Patient
 from professionals.models import Professional
 from appointments.models import Appointment
 from medical_records.models import MedicalRecord, Prescription
+from medications.models import Medication
 
 class Command(BaseCommand):
     help = 'Seeds the database with test data for clinical workflow'
@@ -18,6 +19,7 @@ class Command(BaseCommand):
         self.stdout.write('- Limpando registros antigos...')
         Prescription.objects.all().delete()
         MedicalRecord.objects.all().delete()
+        Medication.objects.all().delete()
         Appointment.objects.all().delete()
 
         # 2. Criar Profissionais
@@ -165,4 +167,16 @@ class Command(BaseCommand):
             )
 
         self.stdout.write(self.style.SUCCESS('- 5 registros de prontuário (histórico) criados.'))
-        self.stdout.write(self.style.SUCCESS('Banco de dados semeado com sucesso!'))
+        # 6. Medicamentos
+        self.stdout.write("Criando medicamentos...")
+        meds_data = [
+            {"name": "Amoxicilina 500mg", "lot_number": "LOT-2025-001", "expiration_date": "2026-06-15", "quantity": 200, "provider": "Farmalab"},
+            {"name": "Dipirona 1g", "lot_number": "LOT-2025-032", "expiration_date": "2026-04-10", "quantity": 150, "provider": "MedLabs"},
+            {"name": "Omeprazol 20mg", "lot_number": "LOT-2025-018", "expiration_date": "2026-03-20", "quantity": 45, "provider": "HealthCorp"},
+            {"name": "Losartana 50mg", "lot_number": "LOT-2025-044", "expiration_date": "2027-01-30", "quantity": 300, "provider": "BioGene"},
+            {"name": "Paracetamol 750mg", "lot_number": "LOT-2025-055", "expiration_date": "2026-03-12", "quantity": 80, "provider": "Eurofarma"},
+        ]
+        for m in meds_data:
+            Medication.objects.create(**m)
+
+        self.stdout.write(self.style.SUCCESS("Banco de dados semeado com sucesso!"))

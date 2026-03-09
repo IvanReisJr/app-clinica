@@ -13,6 +13,9 @@ import { AgendaPage } from './pages/AgendaPage';
 import { FilaAtendimentoPage } from './pages/FilaAtendimentoPage';
 import { AtendimentoPage } from './pages/AtendimentoPage';
 import { ProntuarioPage } from './pages/ProntuarioPage';
+import { MedicationsPage } from './pages/MedicationsPage';
+import { KardexPage } from './pages/KardexPage';
+import { UsersPage } from './pages/UsersPage';
 import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
@@ -40,6 +43,9 @@ function App() {
                 <Route path="queue" element={<FilaAtendimentoPage />} />
                 <Route path="records" element={<ProntuarioPage />} />
                 <Route path="records/:id" element={<AtendimentoPage />} />
+                <Route path="medications" element={<MedicationsPage />} />
+                <Route path="kardex" element={<KardexPage />} />
+                <Route path="users" element={<UsersPage />} />
               </Route>
             </Route>
 

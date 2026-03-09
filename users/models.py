@@ -3,11 +3,16 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
-        ('admin', 'Admin'),
-        ('doctor', 'Doctor'),
-        ('receptionist', 'Receptionist'),
+        ('admin', 'Administrador'),
+        ('receptionist', 'Recepção'),
+        ('doctor', 'Médico'),
+        ('enfermagem', 'Enfermagem'),
+        ('farmacia', 'Farmácia'),
+        ('financeiro', 'Financeiro'),
+        ('painel', 'Painel'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='receptionist')
+    full_name = models.CharField(max_length=255, null=True, blank=True)
     crm = models.CharField(max_length=20, null=True, blank=True)
 
     def __str__(self):

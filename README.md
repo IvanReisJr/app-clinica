@@ -18,6 +18,22 @@ Consulte a pasta `docs/` para obter informações detalhadas sobre a arquitetura
 - `docs/roadmap.md`: Próximos passos e backlog de produto.
 - `docs/adr/`: Registros de Decisões Arquitetônicas (Architecture Decision Records).
 
+## Módulos Implementados
+
+### 💊 Gestão de Estoque (Farmácia)
+- Cadastro de medicamentos com gestão de lotes, validades e estoques mínimos.
+- **Kardex Unificado:** Visualização completa de entradas e saídas.
+- Modal inteligente para lançamentos de estoque fácil.
+
+### 👥 Usuários e Perfis
+- Role-based Access Control (RBAC) com suporte a múltiplos cargos (Administrador, Médicos, etc).
+- Cadastro refinado com separação de Login e Nome Completo.
+- Filtros avançados e status de usuário.
+
+### 🎨 UI/UX
+- Sistema visual premium baseado em componentes customizados com Tailwind CSS.
+- Dashboard unificado e responsivo para desktop.
+
 ## Início Rápido
 Consulte [docs/setup.md](docs/setup.md) para configurar o projeto localmente.
 
