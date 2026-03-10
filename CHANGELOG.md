@@ -4,9 +4,33 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Unreleased]
+## [1.2.0] - 2026-03-10
 
 ### Adicionado
+- **Configurações de Marca (White Label)**:
+    - Novo app `system_settings` para armazenar Nome e Logo da clínica.
+    - `SettingsContext` no frontend para propagação global da identidade visual.
+    - Tela de configurações com upload de logo e visualização em tempo real.
+- **Painel de Chamada TV**:
+    - Rota `/painel` otimizada para televisores da recepção.
+    - Efeito sonoro de chamada (Ding) com controle de áudio.
+    - Relógio sincronizado e histórico de senhas em destaque.
+- **Infraestrutura Docker Profissional**:
+    - `Dockerfile` para Backend e Frontend (Nginx).
+    - Orquestração completa via `docker-compose.yml`.
+    - Suporte a múltiplos dispositivos via IP dinâmico no servidor.
+
+### Alterado
+- **Relatórios**:
+    - Adicionado suporte a cabeçalhos dinâmicos com Logo e Nome da Clínica em todos os PDFs.
+- **Prontuário**:
+    - Visual mais compacto e IDs formatados (#00000X) para agilizar o atendimento.
+
+### Corrigido
+- Erros de dependências nativas no Docker (libcaido, pango).
+- Bug de interpolação no relatório de Kardex.
+
+## [1.1.0] - 2026-03-09
 - **Módulo de Estoque (Farmácia)**:
     - CRUD completo de medicamentos com gestão de lotes e validade.
     - Implementação do **Kardex** (movimentações históricas) com filtros de data.
