@@ -1,5 +1,5 @@
-# Usar uma imagem oficial leve do Python
-FROM python:3.11-slim
+# Usar uma imagem oficial estável do Python (Debian Bookworm)
+FROM python:3.11-slim-bookworm
 
 # Evitar que o Python gere arquivos .pyc e garantir que logs apareçam no console
 ENV PYTHONDONTWRITEBYTECODE 1
