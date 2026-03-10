@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import { Lock, User as UserIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import api from '../api';
-import logoMedtrace from '../assets/medtrace-logo.png';
 
 export function Login() {
     const [username, setUsername] = useState('');
@@ -15,6 +15,7 @@ export function Login() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
+    const { clinicLogo } = useSettings();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,7 +44,7 @@ export function Login() {
 
                 <div className="relative z-10 flex flex-col items-center max-w-md text-center">
                     <div className="bg-white rounded-2xl p-8 mb-10 shadow-2xl shadow-blue-900/20 flex items-center justify-center">
-                        <img src={logoMedtrace} alt="Medtrace" className="w-52 h-auto object-contain" />
+                        <img src={clinicLogo} alt="Logo" className="w-52 h-auto object-contain" />
                     </div>
 
                     <h2 className="text-xl font-medium leading-relaxed text-blue-50 px-6">

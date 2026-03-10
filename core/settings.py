@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'medical_records',
     'medications',
     'dashboard',
+    'reports',
+    'system_settings',
 ]
 
 MIDDLEWARE = [
@@ -107,6 +109,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'URL_FORMAT_OVERRIDE': None,
 }
 
 SPECTACULAR_SETTINGS = {

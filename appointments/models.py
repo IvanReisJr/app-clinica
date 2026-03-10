@@ -8,6 +8,7 @@ class Appointment(models.Model):
         ('confirmado', 'Confirmado'),
         ('aguardando', 'Aguardando'),
         ('triagem', 'Triagem'),
+        ('chamado', 'Chamado'),
         ('em_atendimento', 'Em Atendimento'),
         ('atendido', 'Atendido'),
         ('faltou', 'Faltou'),

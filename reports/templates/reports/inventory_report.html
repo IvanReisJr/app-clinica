@@ -1,0 +1,37 @@
+{% extends "reports/base_report.html" %}
+
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th width="35%">MEDICAMENTO</th>
+            <th width="15%">LOTE</th>
+            <th width="15%">VALIDADE</th>
+            <th width="15%">ESTOQUE</th>
+            <th width="20%">FORNECEDOR</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in medications %}
+        <tr>
+            <td>{{ m.name }}</td>
+            <td>{{ m.lot_number|default:"-" }}</td>
+            <td>{{ m.expiration_date|date:"d/m/Y"|default:"-" }}</td>
+            <td style="font-weight: bold; color: {% if m.quantity < 10 %}#e11d48{% else %}#1e293b{% endif %};">
+                {{ m.quantity }}
+            </td>
+            <td>{{ m.provider|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align:center;">Nenhum item encontrado no estoque.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px; font-size: 11px;">
+    <strong>Resumo do Inventário:</strong><br>
+    Total de Itens Diferentes: {{ medications|length }}
+</div>
+{% endblock %}

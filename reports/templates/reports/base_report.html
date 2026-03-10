@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0.5cm;
+
+            @frame footer_frame {
+                -pdf-frame-content: footer_content;
+                left: 0.5cm;
+                width: 20cm;
+                top: 28.5cm;
+                height: 1cm;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .header {
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-text {
+            color: #2563eb;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .report-title {
+            color: #0f172a;
+            font-size: 18px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .meta-info {
+            font-size: 10px;
+            color: #64748b;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 8px;
+            text-align: left;
+            padding: 4px;
+            vertical-align: bottom;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 4px;
+            font-size: 8px;
+            vertical-align: top;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 9px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <table style="margin:0; border:none;">
+            <tr>
+                <td style="border:none; padding:0;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        {% if clinic_logo %}
+                        <img src="{{ clinic_logo }}"
+                            style="height: 50px; width: auto; vertical-align: middle; margin-right: 15px;">
+                        {% endif %}
+                        <div style="display: inline-block; vertical-align: middle;">
+                            <span class="logo-text">{{ clinic_name }}</span><br>
+                            <span class="report-title">{{ title }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td style="border:none; text-align:right; padding:0;">
+                    <div class="meta-info">
+                        Gerado em: {{ now|date:"d/m/Y H:i" }}<br>
+                        Emitido por: {{ user.full_name|default:user.username }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div id="footer_content" class="footer">
+        Medtrace Health - Sistema de Gestão Clínica Profissional | Página <pdf:pagenumber> de <pdf:pagecount>
+    </div>
+</body>
+
+</html>

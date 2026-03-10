@@ -1,0 +1,40 @@
+{% extends "reports/base_report.html" %}
+
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th width="15%">DATA/HORA</th>
+            <th width="25%">MEDICAMENTO</th>
+            <th width="10%">TIPO</th>
+            <th width="10%">QTD</th>
+            <th width="15%">USUÁRIO</th>
+            <th width="25%">MOTIVO/DESCRIÇÃO</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in movements %}
+        <tr>
+            <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+            <td style="font-weight: bold;">{{ m.medication.name }}</td>
+            <td>{{ m.get_type_display }}</td>
+            <td
+                style="color: {% if m.type == 'saida' or m.type == 'vencimento' %}#e11d48{% else %}#059669{% endif %}; font-weight: bold;">
+                {{ m.formatted_quantity }}
+            </td>
+            <td>{{ m.user.username }}</td>
+            <td>{{ m.description|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="text-align:center;">Nenhuma movimentação encontrada no período.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px; font-size: 11px;">
+    <strong>Resumo de Movimentações:</strong><br>
+    Total de registros: {{ movements|length }}
+</div>
+{% endblock %}

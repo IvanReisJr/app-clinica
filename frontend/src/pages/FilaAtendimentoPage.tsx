@@ -60,38 +60,41 @@ export function FilaAtendimentoPage() {
             const params = new URLSearchParams();
             params.append('date', today);
             const { data } = await api.get(`v1/appointments/?${params.toString()}`);
-            return data.filter((d: any) => d.status === 'aguardando' || d.status === 'em_atendimento');
+            return data.filter((d: any) => d.status === 'aguardando' || d.status === 'chamado' || d.status === 'em_atendimento');
         },
-        refetchInterval: 5000,
+        refetchInterval: 3000,
     });
 
     const queue = queueData.filter(d => d.status === "aguardando").sort((a, b) => a.appointment_time.localeCompare(b.appointment_time));
+    const called = queueData.filter(d => d.status === "chamado");
     const inProgress = queueData.filter(d => d.status === "em_atendimento");
 
-    const mutStartAttendance = useMutation({
-        mutationFn: async (id: number) => {
-            const payload = {
-                status: "em_atendimento",
-                attendance_started_at: new Date().toISOString()
-            };
+    const mutUpdateStatus = useMutation({
+        mutationFn: async ({ id, status, started = false }: { id: number, status: string, started?: boolean }) => {
+            const payload: any = { status };
+            if (started) {
+                payload.attendance_started_at = new Date().toISOString();
+            }
             return await api.patch(`v1/appointments/${id}/`, payload);
         },
-        onSuccess: (_, id) => {
-            toast.success("Atendimento iniciado com sucesso!");
+        onSuccess: (_, variables) => {
+            toast.success(variables.status === 'em_atendimento' ? "Atendimento iniciado!" : "Paciente chamado no painel!");
             queryClient.invalidateQueries({ queryKey: ['queue_appointments'] });
-            navigate(`/atendimento/${id}`);
+            if (variables.status === 'em_atendimento') {
+                navigate(`/atendimento/${variables.id}`);
+            }
         },
         onError: () => {
-            toast.error("Erro ao iniciar atendimento via API. Tente novamente.");
+            toast.error("Erro ao atualizar status. Tente novamente.");
         }
     });
 
-    const startAttendance = async (item: QueueItem) => {
-        mutStartAttendance.mutate(item.id);
+    const callPatient = async (item: QueueItem) => {
+        mutUpdateStatus.mutate({ id: item.id, status: "chamado" });
     };
 
-    const callPatient = async (item: QueueItem) => {
-        await startAttendance(item);
+    const startAttendance = async (item: QueueItem) => {
+        mutUpdateStatus.mutate({ id: item.id, status: "em_atendimento", started: true });
     };
 
     return (
@@ -101,13 +104,18 @@ export function FilaAtendimentoPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Fila de Atendimento</h1>
                     <p className="text-muted-foreground mt-1">Gerenciamento de chamadas e tempo de espera no lobby</p>
                 </div>
-                <Badge variant="secondary" className="text-sm px-4 py-1.5">{queue.length} aguardando</Badge>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" size="sm" onClick={() => window.open('/painel', '_blank')} className="border-indigo-200 text-indigo-600 hover:bg-indigo-50 shadow-sm">
+                        <Megaphone className="h-4 w-4 mr-2" /> Abrir Painel TV
+                    </Button>
+                    <Badge variant="secondary" className="text-sm px-4 py-1.5">{queue.length} aguardando</Badge>
+                </div>
             </div>
 
             {/* In progress */}
             {inProgress.length > 0 && (
                 <div className="space-y-3 pt-2">
-                    <h2 className="text-sm font-semibold text-primary flex items-center gap-2 uppercase tracking-wider"><Play className="h-4 w-4" opacity={0.8} /> Em Atendimento</h2>
+                    <h2 className="text-sm font-semibold text-primary flex items-center gap-2 uppercase tracking-wider"><Play className="h-4 w-4" opacity={0.8} /> Em Atendimento Agora</h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {inProgress.map(item => {
                             const startedAt = item.attendance_started_at ? differenceInMinutes(new Date(), new Date(item.attendance_started_at)) : 0;
@@ -132,9 +140,29 @@ export function FilaAtendimentoPage() {
                 </div>
             )}
 
+            {/* Chamados (Waiting to walk to the office) */}
+            {called.length > 0 && (
+                <div className="space-y-3 pt-4">
+                    <h2 className="text-sm font-semibold text-indigo-600 flex items-center gap-2 uppercase tracking-wider"><Megaphone className="h-4 w-4" opacity={0.8} /> Chamados no Painel (Aguardando Entrada)</h2>
+                    <div className="bg-white border rounded-xl shadow-md overflow-hidden divide-y divide-indigo-50">
+                        {called.map((item) => (
+                            <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4 bg-indigo-50/20">
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-bold text-slate-900 text-[15px]">{item.patient_detail?.full_name}</p>
+                                    <p className="text-xs text-slate-500 mt-1">{item.professional_detail?.name} {item.room && <span className="text-indigo-600">| Sala: {item.room}</span>}</p>
+                                </div>
+                                <Button size="sm" onClick={() => startAttendance(item)} className="bg-indigo-600 hover:bg-indigo-700 text-white" disabled={mutUpdateStatus.isPending}>
+                                    <Play className="h-4 w-4 mr-2" /> Iniciar Atendimento
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Queue */}
             <div className="space-y-3 pt-4">
-                <h2 className="text-sm font-semibold text-amber-600 flex items-center gap-2 uppercase tracking-wider"><Clock className="h-4 w-4" opacity={0.8} /> Pacientes Aguardando na Recepção</h2>
+                <h2 className="text-sm font-semibold text-amber-600 flex items-center gap-2 uppercase tracking-wider"><Clock className="h-4 w-4" opacity={0.8} /> Pacientes na Recepção (Aguardando Chamada)</h2>
                 {queue.length === 0 ? (
                     <div className="bg-white border rounded-xl p-12 text-center shadow-sm">
                         <div className="mx-auto w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3 ring-1 ring-slate-100"><Clock className="h-5 w-5 text-slate-300" /></div>
@@ -172,7 +200,7 @@ export function FilaAtendimentoPage() {
                                             {item.room && <span className="text-[10px] text-slate-500 font-medium">📍 {item.room}</span>}
                                         </div>
 
-                                        <Button size="sm" onClick={() => callPatient(item)} className="text-xs h-9 bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold px-4 disabled:opacity-50" disabled={mutStartAttendance.isPending}>
+                                        <Button size="sm" onClick={() => callPatient(item)} className="text-xs h-9 bg-primary hover:bg-primary/90 text-white shadow-sm font-semibold px-4 disabled:opacity-50" disabled={mutUpdateStatus.isPending}>
                                             <Megaphone className="h-4 w-4 mr-2" /> Chamar
                                         </Button>
                                     </div>

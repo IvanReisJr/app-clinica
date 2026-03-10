@@ -1,0 +1,35 @@
+{% extends "reports/base_report.html" %}
+
+{% block content %}
+<table>
+    <thead>
+        <tr>
+            <th width="15%">DATA/HORA</th>
+            <th width="35%">PACIENTE</th>
+            <th width="30%">PROFISSIONAL</th>
+            <th width="12%">STATUS</th>
+            <th width="8%">TIPO</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for appt in appointments %}
+        <tr>
+            <td>{{ appt.appointment_date|date:"d/m/Y" }} {{ appt.appointment_time|time:"H:i" }}</td>
+            <td>{{ appt.patient.full_name }}</td>
+            <td>{{ appt.professional.name|default:"-" }}</td>
+            <td>{{ appt.get_status_display }}</td>
+            <td>{% if appt.is_encaixe %}Encaixe{% else %}Regular{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" style="text-align:center;">Nenhum agendamento encontrado no período.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px; font-size: 11px;">
+    <strong>Resumo do Relatório:</strong><br>
+    Total de Agendamentos: {{ appointments|length }}
+</div>
+{% endblock %}

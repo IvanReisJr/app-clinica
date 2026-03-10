@@ -14,6 +14,8 @@ from medications.views import MedicationViewSet, MedicationMovementViewSet
 from appointments.views import AppointmentViewSet
 from professionals.views import ProfessionalViewSet
 from dashboard.views import DashboardStatsView
+from reports.views import ExportPatientsView, ExportAppointmentsView, ExportInventoryView, ExportMedicationMovementsView
+from system_settings.views import SystemSettingViewSet
 
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
@@ -25,13 +27,18 @@ router.register(r'medications', MedicationViewSet, basename='medication')
 router.register(r'medication_movements', MedicationMovementViewSet, basename='medication_movement')
 router.register(r'appointments', AppointmentViewSet, basename='appointment')
 router.register(r'professionals', ProfessionalViewSet, basename='professional')
+router.register(r'settings', SystemSettingViewSet, basename='setting')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
     # Endpoints principais da API V1
-    path('api/v1/', include(router.urls)),
     path('api/v1/dashboard/stats/', DashboardStatsView.as_view(), name='dashboard-stats'),
+    path('api/v1/reports/patients/', ExportPatientsView.as_view(), name='report-patients'),
+    path('api/v1/reports/appointments/', ExportAppointmentsView.as_view(), name='report-appointments'),
+    path('api/v1/reports/inventory/', ExportInventoryView.as_view(), name='report-inventory'),
+    path('api/v1/reports/medication-movements/', ExportMedicationMovementsView.as_view(), name='report-medication-movements'),
+    path('api/v1/', include(router.urls)),
     
     # Endpoints de Autenticação JWT
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

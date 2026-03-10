@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    Search, FileText, User, Calendar, Clock, ChevronRight,
+    Search, FileText, Clock, ChevronRight,
     Stethoscope, Activity, SearchX, PlayCircle
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -48,12 +48,12 @@ export function ProntuarioPage() {
     const ongoingAppts = appointments.filter(a => a.status === 'em_atendimento');
     const waitingAppts = appointments.filter(a => a.status === 'agendado' || a.status === 'confirmado');
 
-    const filteredPatients = searchTerm.length >= 3
-        ? patients.filter(p =>
+    const filteredPatients = searchTerm.trim() === ""
+        ? patients
+        : patients.filter(p =>
             p.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.cpf.includes(searchTerm)
-        )
-        : [];
+            (p.cpf && p.cpf.includes(searchTerm))
+        );
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -157,32 +157,34 @@ export function ProntuarioPage() {
                         />
                     </div>
 
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100 min-h-[100px] max-h-[400px] overflow-y-auto">
-                        {searchTerm.length < 3 ? (
-                            <div className="p-10 text-center">
-                                <p className="text-slate-400 text-sm font-medium">Digite pelo menos 3 caracteres para buscar.</p>
-                            </div>
-                        ) : filteredPatients.length > 0 ? (
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100 min-h-[100px] max-h-[240px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+                        {filteredPatients.length > 0 ? (
                             filteredPatients.map(p => (
-                                <div key={p.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors group">
+                                <div key={p.id} className="py-2.5 px-4 flex items-center justify-between hover:bg-slate-50 transition-colors group cursor-pointer" onClick={() => navigate(`/patients/edit/${p.id}`)}>
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-                                            {p.full_name.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-slate-900 text-sm">{p.full_name}</p>
-                                            <p className="text-xs text-slate-500 font-mono tracking-tight">{p.cpf || '000.000.000-00'}</p>
-                                        </div>
+                                        <span className="font-mono text-[10px] text-slate-400 font-bold w-12 text-center">
+                                            #{String(p.id).padStart(5, '0')}
+                                        </span>
+                                        <p className="font-bold text-slate-900 text-sm">{p.full_name}</p>
                                     </div>
-                                    <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50" onClick={() => navigate(`/patients/edit/${p.id}`)}>
-                                        <FileText className="h-4 w-4 mr-1" /> Ver Ficha
-                                    </Button>
+                                    <div className="flex items-center gap-4">
+                                        <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
+                                            {p.cpf || "—"}
+                                        </p>
+                                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-slate-300 group-hover:text-blue-600 group-hover:bg-blue-50">
+                                            <FileText className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 </div>
                             ))
-                        ) : (
+                        ) : searchTerm.length > 0 ? (
                             <div className="p-10 text-center flex flex-col items-center gap-3">
                                 <SearchX className="h-10 w-10 text-slate-200" />
-                                <p className="text-slate-400 text-sm">Nenhum paciente encontrado.</p>
+                                <p className="text-slate-400 text-sm">Nenhum paciente encontrado com "{searchTerm}".</p>
+                            </div>
+                        ) : (
+                            <div className="p-10 text-center">
+                                <p className="text-slate-400 text-xs font-medium italic">Role ou busque pacientes na lista...</p>
                             </div>
                         )}
                     </div>
