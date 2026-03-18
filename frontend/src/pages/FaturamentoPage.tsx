@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { 
   DollarSign, Clock, Package, Send, CheckCircle, 
   XCircle, AlertTriangle, Eye, PlusSquare, Receipt

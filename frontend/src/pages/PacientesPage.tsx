@@ -191,7 +191,7 @@ export default function PacientesPage() {
       }
 
       if (patientId && photoFile) {
-        const url = await uploadPhoto(patientId);
+        await uploadPhoto(patientId);
         // Opcional: Atualizar URL da foto quando endpoint existir
       }
 

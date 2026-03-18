@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useQuery } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 
 interface CalledPatient {

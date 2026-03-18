@@ -133,8 +133,10 @@ export function NewPatient() {
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-500 pb-12">
             <div className="flex items-center gap-4 border-b pb-6 text-slate-900">
-                <Button variant="outline" size="icon" render={<Link to="/patients" />} className="rounded-full shadow-sm hover:bg-slate-100 flex items-center justify-center">
-                    <ArrowLeft className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="rounded-full shadow-sm hover:bg-slate-100 flex items-center justify-center" asChild>
+                    <Link to="/patients">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Link>
                 </Button>
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
@@ -332,8 +334,8 @@ export function NewPatient() {
                         </FieldGroup>
 
                         <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
-                            <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" render={<Link to="/patients" />}>
-                                Cancelar
+                            <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" asChild>
+                                <Link to="/patients">Cancelar</Link>
                             </Button>
                             <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-bold text-base" disabled={mutation.isPending}>
                                 {mutation.isPending ? (

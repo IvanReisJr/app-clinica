@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Search, Plus, RefreshCw } from "lucide-react";
 import { useState, useMemo } from "react";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { cn } from "../lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

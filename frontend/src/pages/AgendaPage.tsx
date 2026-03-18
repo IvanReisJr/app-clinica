@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  Plus, ChevronLeft, ChevronRight, Zap, Filter, Trash2, Settings,
+  ChevronLeft, ChevronRight, Zap, Trash2, Settings,
   Search, CheckCircle, UserPlus, ShieldAlert, AlertTriangle, CreditCard,
-  Lock, CalendarSearch, X, Clock, Megaphone
+  Lock, CalendarSearch, X, Megaphone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle,  } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { format, addDays, addMinutes, parse, isSameDay, isAfter, isBefore } from "date-fns";
+import { format, addDays, addMinutes, parse, isSameDay, isBefore } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { apiClient } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -34,7 +34,7 @@ interface Appointment {
   is_encaixe: boolean;
   confirmed_at: string | null;
   patients?: {
-    name: string; cpf: string | null; phone: string | null; sex: string | null; gender: string | null;
+    name: string; full_name?: string | null; cpf: string | null; phone: string | null; sex: string | null; gender: string | null;
     birth_date: string | null; address: string | null; insurance: string | null;
     convenio_id: string | null; numero_carteirinha: string | null;
     validade_plano: string | null; tipo_plano: string | null; emergency_contact: string | null;
@@ -358,11 +358,7 @@ export function AgendaPage() {
     }
   };
 
-  const handleDeleteBlock = async (id: number) => {
-    await apiClient.delete(`/schedule-blocks/${id}/`);
-    fetchAll();
-    toast({ title: "Bloqueio removido" });
-  };
+  ;
 
   // ====== VACANCY SEARCH ======
   const searchVacancy = async () => {
@@ -625,7 +621,7 @@ export function AgendaPage() {
                             {slot.appointment && (
                               <div className="flex-1 min-w-0 flex flex-col">
                                 <div className="flex items-center justify-between">
-                                  <span className="truncate font-medium flex-1 mr-1" title={slot.appointment.patients?.name || slot.appointment.patients?.full_name}>{slot.appointment.patients?.name || slot.appointment.patients?.full_name}</span>
+                                  <span className="truncate font-medium flex-1 mr-1" title={slot.appointment.patients?.name || slot.appointment.patients?.full_name || ""}>{slot.appointment.patients?.name || slot.appointment.patients?.full_name}</span>
                                   <div className="flex gap-0 shrink-0 rounded shadow-sm p-0.5 ml-2 border border-border/10 bg-white/40">
                                     {(slot.appointment.status === "agendado" || slot.appointment.status === "confirmado") && (
                                       <Tooltip>
@@ -1009,7 +1005,7 @@ export function AgendaPage() {
                   <SelectTrigger className="bg-white"><SelectValue placeholder="Selecione na fila..." /></SelectTrigger>
                   <SelectContent className="bg-white">
                     {todayConfirmed.filter(a => a.patients?.name || a.patients?.full_name).map(a => (
-                      <SelectItem key={a.id} value={a.patients!.name || a.patients!.full_name}>{a.patients!.name || a.patients!.full_name} — {a.appointment_time?.slice(0, 5)}</SelectItem>
+                      <SelectItem key={a.id} value={a.patients!.name || a.patients!.full_name || ""}>{a.patients!.name || a.patients!.full_name} — {a.appointment_time?.slice(0, 5)}</SelectItem>
                     ))}
                     {todayConfirmed.length === 0 && <SelectItem value="__none__" disabled>Fila zerada. Nenhum paciente chegou ainda.</SelectItem>}
                   </SelectContent>

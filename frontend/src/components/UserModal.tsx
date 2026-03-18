@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { toast } from "sonner";
 import { User } from "../pages/UsersPage";
 import { Loader2, Save, X, Edit, Plus } from "lucide-react";

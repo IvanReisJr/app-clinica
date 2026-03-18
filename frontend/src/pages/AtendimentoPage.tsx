@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { differenceInSeconds, format } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 
 interface AppointmentDetail {
     id: number;

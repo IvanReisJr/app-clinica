@@ -4,7 +4,7 @@ import {
     AlertTriangle, Package, Trash2, History
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { cn } from "../lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -86,19 +86,19 @@ export function MedicationsPage() {
     const getStockStatus = (qty: number) => {
         if (qty <= 0) return (
             <Tooltip>
-                <TooltipTrigger render={(p) => <div {...p} className="cursor-help"><Badge variant="destructive">Sem Estoque</Badge></div>} />
+                <TooltipTrigger asChild><div className="cursor-help"><Badge variant="destructive">Sem Estoque</Badge></div></TooltipTrigger>
                 <TooltipContent>Necessário reposição imediata.</TooltipContent>
             </Tooltip>
         );
         if (qty < 20) return (
             <Tooltip>
-                <TooltipTrigger render={(p) => <div {...p} className="cursor-help"><Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">Baixo</Badge></div>} />
+                <TooltipTrigger asChild><div className="cursor-help"><Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">Baixo</Badge></div></TooltipTrigger>
                 <TooltipContent>Estoque abaixo do nível de segurança (20 unidades).</TooltipContent>
             </Tooltip>
         );
         return (
             <Tooltip>
-                <TooltipTrigger render={(p) => <div {...p} className="cursor-help"><Badge variant="secondary" className="bg-emerald-50 text-emerald-700">OK</Badge></div>} />
+                <TooltipTrigger asChild><div className="cursor-help"><Badge variant="secondary" className="bg-emerald-50 text-emerald-700">OK</Badge></div></TooltipTrigger>
                 <TooltipContent>Estoque em nível adequado (acima de 20 unidades).</TooltipContent>
             </Tooltip>
         );
@@ -125,42 +125,38 @@ export function MedicationsPage() {
                             <div className="h-4 w-px bg-slate-300"></div>
                             <div className="flex items-center gap-4">
                                 <Tooltip>
-                                    <TooltipTrigger render={(props) => (
+                                    <TooltipTrigger asChild>
                                         <Badge
-                                            {...props}
                                             onClick={() => setActiveFilter('active')}
                                             variant="outline"
                                             className={cn(
                                                 "cursor-pointer font-bold transition-all h-7 px-4 rounded-full flex items-center justify-center",
                                                 activeFilter === 'active'
                                                     ? "bg-emerald-600 text-white border-emerald-700 shadow-md scale-105"
-                                                    : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100",
-                                                props.className
+                                                    : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
                                             )}
                                         >
                                             {activeMedsCount} Ativos
                                         </Badge>
-                                    )} />
+                                    </TooltipTrigger>
                                     <TooltipContent side="bottom">Ver itens em estoque</TooltipContent>
                                 </Tooltip>
 
                                 <Tooltip>
-                                    <TooltipTrigger render={(props) => (
+                                    <TooltipTrigger asChild>
                                         <Badge
-                                            {...props}
                                             onClick={() => setActiveFilter('inactive')}
                                             variant="outline"
                                             className={cn(
                                                 "cursor-pointer font-bold transition-all h-7 px-4 rounded-full flex items-center justify-center",
                                                 activeFilter === 'inactive'
                                                     ? "bg-rose-600 text-white border-rose-700 shadow-md scale-105"
-                                                    : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100",
-                                                props.className
+                                                    : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
                                             )}
                                         >
                                             {inactiveMedsCount} Inativos
                                         </Badge>
-                                    )} />
+                                    </TooltipTrigger>
                                     <TooltipContent side="bottom">Ver itens arquivados</TooltipContent>
                                 </Tooltip>
                             </div>
@@ -214,12 +210,10 @@ export function MedicationsPage() {
                                     <td className="px-6 py-4 font-mono text-sm text-slate-600">{med.lot_number || '—'}</td>
                                     <td className="px-6 py-4">
                                         <Tooltip>
-                                            <TooltipTrigger render={(triggerProps) => (
+                                            <TooltipTrigger asChild>
                                                 <div
-                                                    {...triggerProps}
                                                     className={cn(
-                                                        "flex items-center gap-2 cursor-help outline-none w-fit p-1 -m-1",
-                                                        triggerProps.className
+                                                        "flex items-center gap-2 cursor-help outline-none w-fit p-1 -m-1"
                                                     )}
                                                 >
                                                     <span className={cn(
@@ -230,7 +224,7 @@ export function MedicationsPage() {
                                                     </span>
                                                     {isExpiringSoon(med.expiration_date) && <AlertTriangle className="h-4 w-4 text-rose-500" />}
                                                 </div>
-                                            )} />
+                                            </TooltipTrigger>
                                             <TooltipContent side="top">
                                                 {isExpiringSoon(med.expiration_date)
                                                     ? "Atenção: Medicamento vencido ou próximo ao vencimento (30 dias)."
@@ -261,29 +255,29 @@ export function MedicationsPage() {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-center gap-1">
                                             <Tooltip>
-                                                <TooltipTrigger render={(p) => (
-                                                    <Button {...p} onClick={() => { setKardexMed(med); setIsKardexOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
+                                                <TooltipTrigger asChild>
+                                                    <Button onClick={() => { setKardexMed(med); setIsKardexOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
                                                         <History className="h-4 w-4" />
                                                     </Button>
-                                                )} />
+                                                </TooltipTrigger>
                                                 <TooltipContent side="top">Ver Histórico (Kardex)</TooltipContent>
                                             </Tooltip>
 
                                             <Tooltip>
-                                                <TooltipTrigger render={(p) => (
-                                                    <Button {...p} onClick={() => { setSelectedMed(med); setIsModalOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                                <TooltipTrigger asChild>
+                                                    <Button onClick={() => { setSelectedMed(med); setIsModalOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
-                                                )} />
+                                                </TooltipTrigger>
                                                 <TooltipContent side="top">Editar Cadastro</TooltipContent>
                                             </Tooltip>
 
                                             <Tooltip>
-                                                <TooltipTrigger render={(p) => (
-                                                    <Button {...p} onClick={() => handleDelete(med.id, med.name)} variant="ghost" size="icon" className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50">
+                                                <TooltipTrigger asChild>
+                                                    <Button onClick={() => handleDelete(med.id, med.name)} variant="ghost" size="icon" className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50">
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
-                                                )} />
+                                                </TooltipTrigger>
                                                 <TooltipContent side="top">Excluir Permanente</TooltipContent>
                                             </Tooltip>
                                         </div>

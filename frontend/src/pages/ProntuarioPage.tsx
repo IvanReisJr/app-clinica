@@ -5,7 +5,7 @@ import {
     Stethoscope, Activity, SearchX, PlayCircle
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

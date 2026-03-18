@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { differenceInMinutes, format } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from "../api";
+import { apiClient } from "@/lib/api";
 
 interface QueueItem {
     id: number;

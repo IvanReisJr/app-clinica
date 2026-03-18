@@ -79,8 +79,10 @@ export function NewProfessional() {
     return (
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-500">
             <div className="flex items-center gap-4 border-b pb-6">
-                <Button variant="outline" size="icon" render={<Link to="/professionals" />} className="rounded-full shadow-sm hover:bg-slate-100">
-                    <ArrowLeft className="h-5 w-5 text-slate-600" />
+                <Button variant="outline" size="icon" className="rounded-full shadow-sm hover:bg-slate-100" asChild>
+                    <Link to="/professionals">
+                        <ArrowLeft className="h-5 w-5 text-slate-600" />
+                    </Link>
                 </Button>
                 <div>
                     <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
@@ -215,8 +217,8 @@ export function NewProfessional() {
                             </FieldGroup>
 
                             <div className="pt-8 flex items-center justify-end gap-4 border-t border-slate-100 mt-10">
-                                <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" render={<Link to="/professionals" />}>
-                                    Descartar Edição
+                                <Button variant="ghost" className="h-12 px-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold" asChild>
+                                    <Link to="/professionals">Descartar Edição</Link>
                                 </Button>
                                 <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 font-bold text-base" disabled={mutation.isPending}>
                                     {mutation.isPending ? (
