@@ -9,10 +9,10 @@ from django.conf.urls.static import static
 # Importando as views das apps
 from users.views import CustomUserViewSet, RolePermissionViewSet
 from patients.views import PatientViewSet
-from medical_records.views import MedicalRecordViewSet, PrescriptionViewSet
+from medical_records.views import MedicalRecordViewSet, PrescriptionViewSet, TriageViewSet
 from medications.views import MedicationViewSet, MedicationMovementViewSet
-from appointments.views import AppointmentViewSet
-from professionals.views import ProfessionalViewSet
+from appointments.views import AppointmentViewSet, ScheduleBlockViewSet, PanelCallViewSet
+from professionals.views import ProfessionalViewSet, ProfessionalScheduleViewSet
 from dashboard.views import DashboardStatsView
 from reports.views import ExportPatientsView, ExportAppointmentsView, ExportInventoryView, ExportMedicationMovementsView
 from system_settings.views import SystemSettingViewSet
@@ -23,10 +23,14 @@ router.register(r'permissions', RolePermissionViewSet, basename='permission')
 router.register(r'patients', PatientViewSet, basename='patient')
 router.register(r'records', MedicalRecordViewSet, basename='record')
 router.register(r'prescriptions', PrescriptionViewSet, basename='prescription')
+router.register(r'triages', TriageViewSet, basename='triage')
 router.register(r'medications', MedicationViewSet, basename='medication')
 router.register(r'medication_movements', MedicationMovementViewSet, basename='medication_movement')
 router.register(r'appointments', AppointmentViewSet, basename='appointment')
+router.register(r'schedule-blocks', ScheduleBlockViewSet, basename='schedule-block')
+router.register(r'panel-calls', PanelCallViewSet, basename='panel-call')
 router.register(r'professionals', ProfessionalViewSet, basename='professional')
+router.register(r'professional-schedules', ProfessionalScheduleViewSet, basename='professional-schedule')
 router.register(r'settings', SystemSettingViewSet, basename='setting')
 
 urlpatterns = [
@@ -38,11 +42,13 @@ urlpatterns = [
     path('api/v1/reports/appointments/', ExportAppointmentsView.as_view(), name='report-appointments'),
     path('api/v1/reports/inventory/', ExportInventoryView.as_view(), name='report-inventory'),
     path('api/v1/reports/medication-movements/', ExportMedicationMovementsView.as_view(), name='report-medication-movements'),
+    path('api/v1/convenios/', include('convenios.urls')),
+    path('api/v1/faturamento/', include('faturamento.urls')),
     path('api/v1/', include(router.urls)),
     
     # Endpoints de Autenticação JWT
-    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Documentação Swagger / OpenAPI
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

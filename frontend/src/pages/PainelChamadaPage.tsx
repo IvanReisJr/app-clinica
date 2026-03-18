@@ -31,7 +31,7 @@ export function PainelChamadaPage() {
         queryKey: ["called_patients"],
         queryFn: async () => {
             const today = format(new Date(), "yyyy-MM-dd");
-            const { data } = await api.get(`v1/appointments/?date=${today}`);
+            const { data } = await apiClient.get(`appointments/?date=${today}`);
             return data
                 .filter((d: any) => d.status === "chamado")
                 .sort((a: any, b: any) => b.updated_at.localeCompare(a.updated_at)); // Mais recente primeiro

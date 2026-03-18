@@ -33,12 +33,12 @@ export function KardexPage() {
 
     const { data: movementsRaw = [], isLoading } = useQuery<Movement[]>({
         queryKey: ['all_medication_movements'],
-        queryFn: async () => (await api.get('v1/medication_movements/')).data
+        queryFn: async () => (await apiClient.get('medication_movements/')).data
     });
 
     const { data: medications = [] } = useQuery({
         queryKey: ['medications'],
-        queryFn: async () => (await api.get('v1/medications/')).data
+        queryFn: async () => (await apiClient.get('medications/')).data
     });
 
     // Cálculo de Saldo Progressivo por Medicamento (Baseado no Estoque Atual)

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '../api';
+import { apiClient } from '../lib/api';
 
 interface User {
     id: number;
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const token = localStorage.getItem('access_token');
         if (token) {
             try {
-                const res = await api.get('v1/users/me/');
+                const res = await apiClient.get('users/me/');
                 setUser(res.data);
             } catch (err) {
                 console.error("Erro ao carregar perfil", err);

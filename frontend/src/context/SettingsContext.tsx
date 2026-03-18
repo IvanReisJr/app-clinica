@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api';
+import { apiClient } from '../lib/api';
 import logoMedtrace from '../assets/medtrace-logo.png';
 
 interface SettingsContextType {
@@ -18,7 +18,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     const fetchSettings = async () => {
         try {
-            const { data } = await api.get('v1/settings/all_as_dict/');
+            const { data } = await apiClient.get('settings/all_as_dict/');
             if (data.clinic_name) setClinicName(data.clinic_name);
             if (data.clinic_logo_url) setClinicLogo(data.clinic_logo_url);
         } catch (error) {

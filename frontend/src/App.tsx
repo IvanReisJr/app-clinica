@@ -20,6 +20,10 @@ import { UsersPage } from './pages/UsersPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { PainelChamadaPage } from './pages/PainelChamadaPage';
 import { ConfiguracoesPage } from './pages/ConfiguracoesPage';
+import ConveniosPage from './pages/ConveniosPage';
+import PacientesPage from './pages/PacientesPage';
+import TriagemPage from './pages/TriagemPage';
+import { FaturamentoPage } from './pages/FaturamentoPage';
 import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
@@ -54,6 +58,10 @@ function App() {
                   <Route path="users" element={<UsersPage />} />
                   <Route path="reports" element={<ReportsPage />} />
                   <Route path="settings" element={<ConfiguracoesPage />} />
+                  <Route path="convenios" element={<ConveniosPage />} />
+                  <Route path="faturamento" element={<FaturamentoPage />} />
+                  <Route path="pacientes" element={<PacientesPage />} />
+                  <Route path="triagem" element={<TriagemPage />} />
                 </Route>
               </Route>
 

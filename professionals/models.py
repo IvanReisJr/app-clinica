@@ -13,3 +13,20 @@ class Professional(models.Model):
 
     def __str__(self):
         return self.name
+
+class ProfessionalSchedule(models.Model):
+    professional = models.ForeignKey(Professional, on_delete=models.CASCADE, related_name='schedules')
+    day_of_week = models.IntegerField(choices=[
+        (0, 'Domingo'), (1, 'Segunda'), (2, 'Terça'), (3, 'Quarta'),
+        (4, 'Quinta'), (5, 'Sexta'), (6, 'Sábado')
+    ])
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    slot_duration_minutes = models.IntegerField(default=30)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('professional', 'day_of_week')
+
+    def __str__(self):
+        return f"{self.professional.name} - {self.day_of_week}: {self.start_time} às {self.end_time}"

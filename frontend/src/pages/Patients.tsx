@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
-import api from '../api';
+import { apiClient } from '../lib/api';
 
 interface Patient {
     id: number;
@@ -29,7 +29,7 @@ export function Patients() {
     const { data: patients, isLoading } = useQuery<Patient[]>({
         queryKey: ['patients', statusFilter],
         queryFn: async () => {
-            const response = await api.get('v1/patients/');
+            const response = await apiClient.get('patients/');
             // Filtering on frontend for now as per professional pattern
             return response.data;
         }
@@ -44,7 +44,7 @@ export function Patients() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            await api.delete(`v1/patients/${id}/`);
+            await apiClient.delete(`patients/${id}/`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -60,7 +60,7 @@ export function Patients() {
 
     const toggleStatusMutation = useMutation({
         mutationFn: async ({ id, is_active }: { id: number, is_active: boolean }) => {
-            await api.patch(`v1/patients/${id}/`, { is_active });
+            await apiClient.patch(`patients/${id}/`, { is_active });
         },
         onMutate: async ({ id, is_active }) => {
             await queryClient.cancelQueries({ queryKey: ['patients'] });
@@ -94,9 +94,11 @@ export function Patients() {
                         Gerencie o cadastro, triagem e registros de seus pacientes.
                     </p>
                 </div>
-                <Button render={<Link to="/patients/new" className="flex items-center" />}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Paciente
+                <Button asChild>
+                    <Link to="/patients/new" className="flex items-center">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Paciente
+                    </Link>
                 </Button>
             </div>
 

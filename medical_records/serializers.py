@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MedicalRecord, Prescription
+from .models import MedicalRecord, Prescription, Triage
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     professional_detail = serializers.SerializerMethodField()
@@ -33,3 +33,9 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         if obj.professional:
             return {'name': obj.professional.name, 'crm': obj.professional.crm}
         return None
+
+class TriageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Triage
+        fields = '__all__'
+

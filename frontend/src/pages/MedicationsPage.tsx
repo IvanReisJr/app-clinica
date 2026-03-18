@@ -41,11 +41,11 @@ export function MedicationsPage() {
 
     const { data: medications = [] } = useQuery<Medication[]>({
         queryKey: ['medications'],
-        queryFn: async () => (await api.get('v1/medications/')).data
+        queryFn: async () => (await apiClient.get('medications/')).data
     });
 
     const mutToggle = useMutation({
-        mutationFn: async (id: number) => await api.post(`v1/medications/${id}/toggle_status/`),
+        mutationFn: async (id: number) => await apiClient.post(`medications/${id}/toggle_status/`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medications'] });
             toast.success("Status atualizado com sucesso.");
@@ -54,7 +54,7 @@ export function MedicationsPage() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            await api.delete(`v1/medications/${id}/`);
+            await apiClient.delete(`medications/${id}/`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medications'] });

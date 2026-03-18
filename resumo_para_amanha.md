@@ -11,7 +11,8 @@
 6. **API Dinâmica**: Frontend detecta automaticamente o IP do servidor para conexão.
 
 ### 🚀 Sprint Atual (1.3) - Próximos Passos
-- [ ] **Módulo de Triagem**: Iniciar formulário de Sinais Vitais (PA, Temperatura, SatO2).
+- [x] **Módulo de Convênios**: Iniciar modelagem (Backend) e integrar CRUD de operadoras e tabelas TUSS (Frontend).
+- [x] **Módulo de Triagem**: Iniciar formulário de Sinais Vitais (PA, Temperatura, SatO2).
 - [ ] **Integração Farmácia**: Baixa automática no Kardex ao realizar atendimento.
 - [ ] **IA de Consumo**: Analisar dados de estoque para prever reposição.
 

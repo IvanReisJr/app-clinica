@@ -1,7 +1,31 @@
 from django.db import models
+from django.conf import settings
 from patients.models import Patient
 from professionals.models import Professional
 from appointments.models import Appointment
+
+class Triage(models.Model):
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='triage')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='triages')
+    
+    blood_pressure = models.CharField(max_length=20, blank=True, null=True, verbose_name="Pressão Arterial")
+    temperature = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True, verbose_name="Temperatura (°C)")
+    weight = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True, verbose_name="Peso (kg)")
+    height = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True, verbose_name="Altura (cm)")
+    saturation = models.IntegerField(blank=True, null=True, verbose_name="Saturação (%)")
+    
+    observations = models.TextField(blank=True, null=True, verbose_name="Observações")
+    
+    performed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='triages_performed')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Triagem'
+        verbose_name_plural = 'Triagens'
+
+    def __str__(self):
+        return f"Triagem - {self.patient.full_name} ({self.created_at.strftime('%d/%m/%Y %H:%M')})"
 
 class MedicalRecord(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')

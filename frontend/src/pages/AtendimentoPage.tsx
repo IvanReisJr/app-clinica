@@ -71,7 +71,7 @@ export function AtendimentoPage() {
     // Load Appointment
     const { data: appt, isLoading: isLoadingAppt } = useQuery<AppointmentDetail>({
         queryKey: ['appointment_detail', id],
-        queryFn: async () => (await api.get(`v1/appointments/${id}/`)).data,
+        queryFn: async () => (await apiClient.get(`appointments/${id}/`)).data,
         enabled: !!id
     });
 
@@ -80,14 +80,14 @@ export function AtendimentoPage() {
     // Load Historical Records for patient
     const { data: history = [] } = useQuery<MedRecord[]>({
         queryKey: ['medical_records', patientId],
-        queryFn: async () => (await api.get(`v1/records/?patient_id=${patientId}`)).data,
+        queryFn: async () => (await apiClient.get(`records/?patient_id=${patientId}`)).data,
         enabled: !!patientId
     });
 
     // Load Current or Past Prescriptions
     const { data: allPrescriptions = [] } = useQuery<Prescription[]>({
         queryKey: ['prescriptions', patientId],
-        queryFn: async () => (await api.get(`v1/prescriptions/?patient_id=${patientId}`)).data,
+        queryFn: async () => (await apiClient.get(`prescriptions/?patient_id=${patientId}`)).data,
         enabled: !!patientId
     });
 
@@ -136,12 +136,12 @@ export function AtendimentoPage() {
                 recordPayload.atestado_observacoes = atestado.observacoes || null;
             }
 
-            await api.post("v1/records/", recordPayload);
+            await apiClient.post("v1/records/", recordPayload);
 
             // Save prescriptions
             for (const rx of rxList) {
                 if (rx.medication.trim()) {
-                    await api.post("v1/prescriptions/", {
+                    await apiClient.post("v1/prescriptions/", {
                         patient: appt.patient,
                         professional: appt.professional,
                         appointment: appt.id,
@@ -174,7 +174,7 @@ export function AtendimentoPage() {
     const mutFinish = useMutation({
         mutationFn: async () => {
             if (!appt) return;
-            await api.patch(`v1/appointments/${appt.id}/`, {
+            await apiClient.patch(`appointments/${appt.id}/`, {
                 status: "atendido",
                 attendance_finished_at: new Date().toISOString()
             });

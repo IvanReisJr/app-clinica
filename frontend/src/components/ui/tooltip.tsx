@@ -1,59 +1,28 @@
-import React, { useState } from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
-export function TooltipProvider({ children }: { children: React.ReactNode }) {
-    return <>{children}</>
-}
+import { cn } from "@/lib/utils";
 
-export function Tooltip({ children }: { children: React.ReactNode }) {
-    const [isVisible, setIsVisible] = useState(false)
+const TooltipProvider = TooltipPrimitive.Provider;
 
-    return (
-        <div
-            className="relative inline-block"
-            onMouseEnter={() => setIsVisible(true)}
-            onMouseLeave={() => setIsVisible(false)}
-        >
-            {React.Children.map(children, child => {
-                if (React.isValidElement(child) && (child.type as any).displayName === "TooltipContent") {
-                    return isVisible ? child : null
-                }
-                return child
-            })}
-        </div>
-    )
-}
+const Tooltip = TooltipPrimitive.Root;
 
-export function TooltipTrigger({ render, children }: { render?: (props: any) => React.ReactNode, children?: React.ReactNode }) {
-    if (render) return <>{render({})}</>
-    return <>{children}</>
-}
-TooltipTrigger.displayName = "TooltipTrigger"
+const TooltipTrigger = TooltipPrimitive.Trigger;
 
-interface TooltipContentProps {
-    children: React.ReactNode
-    className?: string
-    side?: "top" | "bottom"
-}
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <TooltipPrimitive.Content
+    ref={ref}
+    sideOffset={sideOffset}
+    className={cn(
+      "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      className,
+    )}
+    {...props}
+  />
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export function TooltipContent({ children, className, side = "top" }: TooltipContentProps) {
-    return (
-        <div
-            className={cn(
-                "absolute z-[99999] px-3 py-2 text-sm font-semibold text-white bg-slate-900 rounded-lg shadow-2xl whitespace-nowrap pointer-events-none mb-2",
-                side === "top" ? "bottom-full left-1/2 -translate-x-1/2" : "top-full left-1/2 -translate-x-1/2 mt-2",
-                className
-            )}
-        >
-            {children}
-            {/* Seta (Arrow) */}
-            <div
-                className={cn(
-                    "absolute left-1/2 -translate-x-1/2 border-4 border-transparent",
-                    side === "top" ? "top-full border-t-slate-900" : "bottom-full border-b-slate-900"
-                )}
-            />
-        </div>
-    )
-}
-TooltipContent.displayName = "TooltipContent"
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

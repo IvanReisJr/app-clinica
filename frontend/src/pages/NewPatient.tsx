@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import api from '../api';
+import { apiClient } from '../lib/api';
 import { toast } from 'sonner';
 
 const patientSchema = z.object({
@@ -39,7 +39,7 @@ export function NewPatient() {
     const { data: existingPatient, isLoading: isLoadingPatient } = useQuery({
         queryKey: ['patient', id],
         queryFn: async () => {
-            const res = await api.get(`v1/patients/${id}/`);
+            const res = await apiClient.get(`patients/${id}/`);
             return res.data;
         },
         enabled: isEdit,
@@ -99,11 +99,11 @@ export function NewPatient() {
             }
 
             if (isEdit) {
-                return api.patch(`v1/patients/${id}/`, formData, {
+                return apiClient.patch(`patients/${id}/`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
             } else {
-                return api.post('v1/patients/', formData, {
+                return apiClient.post('patients/', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
             }

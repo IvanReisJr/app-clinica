@@ -1,17 +1,22 @@
 from rest_framework import serializers
 from .models import Patient
 from users.serializers import CustomUserSerializer
+from convenios.models import Convenio
 
 class PatientSerializer(serializers.ModelSerializer):
     # Opcionalmente podemos retornar detalhes do usuário amarrado
     user_detail = CustomUserSerializer(source='user', read_only=True)
+    convenio_id = serializers.PrimaryKeyRelatedField(
+        queryset=Convenio.objects.all(), source='convenio', required=False, allow_null=True
+    )
 
     class Meta:
         model = Patient
         fields = [
             'id', 'user', 'user_detail', 'full_name', 'cpf', 'date_of_birth',
             'gender', 'phone', 'email', 'address', 'insurance',
-            'emergency_contact', 'notes', 'photo', 'created_at'
+            'emergency_contact', 'notes', 'photo', 'created_at',
+            'convenio_id', 'numero_carteirinha', 'validade_plano', 'tipo_plano'
         ]
 
 

@@ -57,12 +57,12 @@ export function KardexModal({ medication, isOpen, onClose }: KardexModalProps) {
 
     const { data: movements = [], isLoading } = useQuery<Movement[]>({
         queryKey: ['medication_movements', medication.id],
-        queryFn: async () => (await api.get(`v1/medication_movements/?medication_id=${medication.id}`)).data,
+        queryFn: async () => (await apiClient.get(`medication_movements/?medication_id=${medication.id}`)).data,
         enabled: isOpen
     });
 
     const mutCreate = useMutation({
-        mutationFn: async (payload: any) => await api.post('v1/medication_movements/', payload),
+        mutationFn: async (payload: any) => await apiClient.post('medication_movements/', payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['medication_movements', medication.id] });
             queryClient.invalidateQueries({ queryKey: ['all_medication_movements'] });

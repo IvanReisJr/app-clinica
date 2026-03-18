@@ -15,7 +15,7 @@ import { Separator } from '../components/ui/separator';
 import { Badge } from '../components/ui/badge';
 import { HasPermission } from '../components/HasPermission';
 
-import api from '../api';
+import { apiClient } from '../lib/api';
 import { toast } from 'sonner';
 
 export function ReportsPage() {
@@ -49,7 +49,7 @@ export function ReportsPage() {
                 return;
             }
 
-            const response = await api.get(endpoint, {
+            const response = await apiClient.get(endpoint, {
                 params: {
                     export_type: format,
                     report_id: reportId // Enviamos o ID específico do relatório

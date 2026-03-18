@@ -30,6 +30,11 @@ class Appointment(models.Model):
     attendance_started_at = models.DateTimeField(null=True, blank=True, verbose_name="Início do Atendimento")
     attendance_finished_at = models.DateTimeField(null=True, blank=True, verbose_name="Fim do Atendimento")
 
+    # Faturamento / Convênio Check-In
+    procedimento_tuss = models.CharField(max_length=255, blank=True, null=True, help_text="Código/Descrição TUSS")
+    guia_number = models.CharField(max_length=100, blank=True, null=True, help_text="Número da Guia TISS")
+    authorization_number = models.CharField(max_length=100, blank=True, null=True, help_text="Número de Autorização")
+
     # Flag
     is_encaixe = models.BooleanField(default=False, verbose_name="É Encaixe?")
     confirmed_at = models.DateTimeField(blank=True, null=True)
@@ -53,3 +58,27 @@ class Appointment(models.Model):
     def __str__(self):
         prof_name = self.professional.name if self.professional else "Sem Profissional"
         return f"{self.patient.full_name} com {prof_name} em {self.appointment_date} {self.appointment_time}"
+
+class ScheduleBlock(models.Model):
+    professional = models.ForeignKey(Professional, on_delete=models.CASCADE, related_name='blocks')
+    block_date = models.DateField(db_index=True)
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
+    all_day = models.BooleanField(default=False)
+    reason = models.CharField(max_length=255, blank=True)
+    block_type = models.CharField(max_length=50, default='ausencia')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Block for {self.professional} on {self.block_date}"
+
+class PanelCall(models.Model):
+    patient_name = models.CharField(max_length=255)
+    location = models.CharField(max_length=100)
+    call_type = models.CharField(max_length=50, default='recepcao')
+    called_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    # flag para saber se ja sumiu do painel
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.patient_name} -> {self.location}"

@@ -36,13 +36,13 @@ export function ProntuarioPage() {
     // Load Appointments for today
     const { data: appointments = [] } = useQuery<Appointment[]>({
         queryKey: ['appointments_today'],
-        queryFn: async () => (await api.get('v1/appointments/')).data
+        queryFn: async () => (await apiClient.get('appointments/')).data
     });
 
     // Load All Patients for Search
     const { data: patients = [] } = useQuery<Patient[]>({
         queryKey: ['patients_search'],
-        queryFn: async () => (await api.get('v1/patients/')).data
+        queryFn: async () => (await apiClient.get('patients/')).data
     });
 
     const ongoingAppts = appointments.filter(a => a.status === 'em_atendimento');

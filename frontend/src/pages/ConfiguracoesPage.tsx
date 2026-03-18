@@ -25,7 +25,7 @@ export function ConfiguracoesPage() {
 
     const fetchSettings = async () => {
         try {
-            const { data } = await api.get("v1/settings/all_as_dict/");
+            const { data } = await apiClient.get("v1/settings/all_as_dict/");
             if (data.call_panel_enabled) setCallPanel(data.call_panel_enabled === "true");
             if (data.qr_code_enabled) setQrCode(data.qr_code_enabled === "true");
             if (data.triage_enabled) setTriageEnabled(data.triage_enabled === "true");
@@ -65,7 +65,7 @@ export function ConfiguracoesPage() {
             // Por enquanto, vamos salvar apenas o texto.
             // No futuro, implementaríamos um endpoint de upload de mídia no Django.
 
-            await api.post("v1/settings/bulk_update/", settingsData);
+            await apiClient.post("v1/settings/bulk_update/", settingsData);
             await refreshSettings();
             toast.success("Configurações salvas com sucesso!");
         } catch (error) {

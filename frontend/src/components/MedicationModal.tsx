@@ -58,9 +58,9 @@ export function MedicationModal({ isOpen, onClose, medication }: MedicationModal
     const mutation = useMutation({
         mutationFn: async (data: MedicationForm) => {
             if (isEditing) {
-                return await api.patch(`v1/medications/${medication.id}/`, data);
+                return await apiClient.patch(`medications/${medication.id}/`, data);
             }
-            return await api.post("v1/medications/", data);
+            return await apiClient.post("v1/medications/", data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["medications"] });

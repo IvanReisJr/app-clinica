@@ -1,12 +1,19 @@
 from rest_framework import serializers
-from .models import Appointment
+from .models import Appointment, ScheduleBlock, PanelCall
 from patients.models import Patient
 from professionals.models import Professional
 
 class PatientNestedSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='full_name', read_only=True)
+    birth_date = serializers.DateField(source='date_of_birth', read_only=True)
+    
     class Meta:
         model = Patient
-        fields = ['id', 'full_name', 'cpf']
+        fields = [
+            'id', 'name', 'cpf', 'phone', 'gender', 
+            'birth_date', 'address', 'insurance', 'emergency_contact', 
+            'convenio_id', 'numero_carteirinha', 'validade_plano', 'tipo_plano'
+        ]
 
 class ProfessionalNestedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,17 +21,18 @@ class ProfessionalNestedSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    # Campos detalhados para exibição (Read-only)
-    patient_detail = PatientNestedSerializer(source='patient', read_only=True)
-    professional_detail = ProfessionalNestedSerializer(source='professional', read_only=True)
+    # Campos detalhados para exibir pacientes/profissionais 
+    patients = PatientNestedSerializer(source='patient', read_only=True)
+    professionals = ProfessionalNestedSerializer(source='professional', read_only=True)
 
     class Meta:
         model = Appointment
         fields = [
-            'id', 'patient', 'patient_detail', 'professional', 'professional_detail', 
+            'id', 'patient', 'patients', 'professional', 'professionals', 
             'appointment_date', 'appointment_time', 'status', 'notes', 
             'attendance_number', 'room', 'is_encaixe', 'confirmed_at', 
             'attendance_started_at', 'attendance_finished_at',
+            'procedimento_tuss', 'guia_number', 'authorization_number',
             'created_at', 'updated_at', 'is_active'
         ]
         validators = []
@@ -39,6 +47,21 @@ class AppointmentSerializer(serializers.ModelSerializer):
         # Impedir agendamentos sem data ou hora
         if not date or not time:
             raise serializers.ValidationError("A data e a hora do agendamento são obrigatórias.")
+            
+        # Trava Estrita de "Fechamento de Agenda" retroativa
+        if date and time:
+            from django.utils import timezone
+            import datetime
+            now_dt = timezone.now()
+            
+            # Checa se está tentando agendar num dia que já passou,
+            # ou no dia de hoje em horário que já passou (considerando uma margem estrita)
+            if date < now_dt.date() or (date == now_dt.date() and time < now_dt.time()):
+                # Para updates, não queremos bloquear a edição de um agendamento antigo
+                if not self.instance:
+                    raise serializers.ValidationError({
+                        "non_field_errors": ["Você não pode realizar novos agendamentos em horários passados/vencidos."]
+                    })
         
         # Validar overbooking
         if professional and date and time and not is_encaixe:
@@ -59,3 +82,14 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 })
 
         return data
+
+class ScheduleBlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScheduleBlock
+        fields = '__all__'
+
+class PanelCallSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PanelCall
+        fields = '__all__'
+

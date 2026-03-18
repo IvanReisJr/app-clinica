@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'auditlog',
     'drf_spectacular',
+    'django_filters',
+
     
     # Local Apps
     'users',
@@ -42,6 +44,8 @@ INSTALLED_APPS = [
     'dashboard',
     'reports',
     'system_settings',
+    'convenios',
+    'faturamento',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +113,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'URL_FORMAT_OVERRIDE': None,
 }
 

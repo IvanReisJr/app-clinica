@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import Professional
-from .serializers import ProfessionalSerializer
+from .models import Professional, ProfessionalSchedule
+from .serializers import ProfessionalSerializer, ProfessionalScheduleSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class ProfessionalViewSet(viewsets.ModelViewSet):
@@ -15,3 +15,9 @@ class ProfessionalViewSet(viewsets.ModelViewSet):
         instance.is_active = False
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ProfessionalScheduleViewSet(viewsets.ModelViewSet):
+    queryset = ProfessionalSchedule.objects.all()
+    serializer_class = ProfessionalScheduleSerializer
+    filterset_fields = ['professional', 'day_of_week', 'active']
+    permission_classes = [IsAuthenticated]

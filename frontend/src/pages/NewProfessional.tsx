@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { FieldGroup, Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import api from '../api';
+import { apiClient } from '../lib/api';
 
 const professionalSchema = z.object({
     name: z.string().min(5, 'O nome deve ter no mínimo 5 caracteres'),
@@ -39,7 +39,7 @@ export function NewProfessional() {
     const { isLoading: isLoadingProf, data: profData } = useQuery({
         queryKey: ['professional', id],
         queryFn: async () => {
-            const response = await api.get(`v1/professionals/${id}/`);
+            const response = await apiClient.get(`professionals/${id}/`);
             return response.data;
         },
         enabled: isEditing,
@@ -62,9 +62,9 @@ export function NewProfessional() {
     const mutation = useMutation({
         mutationFn: (newProf: ProfessionalForm) => {
             if (isEditing) {
-                return api.put(`v1/professionals/${id}/`, newProf);
+                return apiClient.put(`professionals/${id}/`, newProf);
             }
-            return api.post('v1/professionals/', newProf);
+            return apiClient.post('professionals/', newProf);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['professionals'] });

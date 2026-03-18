@@ -1,0 +1,149 @@
+﻿[
+{
+  "model": "users.customuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$tt5JZU2OLFYDPNP6RNOQ56$E8Ig3+v9CNRMBwbaRc7crtLxPhJHFaqGicnNBKYLCT4=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-09T12:06:29.885Z",
+    "role": "admin",
+    "full_name": "Administrador",
+    "crm": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$2FTsEpwvbKwrbJsBKeEwmR$QAfP7J1xE5HryNoU6sP1JUN9ZtTRV10atZlnN7Nv1Tc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "dr_joao",
+    "first_name": "JoÒo",
+    "last_name": "Silva",
+    "email": "",
+    "is_staff": false,
+    "is_active": false,
+    "date_joined": "2026-03-09T13:04:18.260Z",
+    "role": "doctor",
+    "full_name": null,
+    "crm": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$f1VJd2nPhkZOIMepqftn2Q$0msWteRc4XzZKOxdAcDddYrNI+84bk27boba5USj7zQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "dra_maria",
+    "first_name": "Maria",
+    "last_name": "Souza",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-09T13:04:18.857Z",
+    "role": "doctor",
+    "full_name": null,
+    "crm": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$9GjK6pgnXNhEn69fPL0RRu$cQ7pc2VP5dJ8YhQHPEnB5GrGHmwgO6HxnypcjujiUps=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "dr_pedro",
+    "first_name": "Pedro",
+    "last_name": "Santos",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-09T14:54:26.727Z",
+    "role": "doctor",
+    "full_name": null,
+    "crm": null,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$XTiIIlohoCB2iCknqlRG8e$wylCfRGuGj/aYy0S4BgcVqQ7/m/yvA+OPIWKeWnjdxI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "marcos",
+    "first_name": "",
+    "last_name": "",
+    "email": "eunaosei@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-09T19:54:09.601Z",
+    "role": "receptionist",
+    "full_name": "Marcos",
+    "crm": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$rLA0q7Cnpmrm5dVVbgekxl$HHm7PWUL+/fXB/K56EKpmQoXc5tUR6ylKcNPkVQW1Fc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Vitoria.Seixas",
+    "first_name": "",
+    "last_name": "",
+    "email": "eunaosei_2@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-09T20:02:09.935Z",
+    "role": "enfermagem",
+    "full_name": "Vit¾ria sEIXAS",
+    "crm": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$cxNp4CNMKCJowNYz8tXRsI$ObkKTqfz2riOTIZMr/0Vb9ZhwKLL2L5M5c+K+pfnxvE=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ingrid",
+    "first_name": "",
+    "last_name": "",
+    "email": "igrid@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-09T21:14:11.799Z",
+    "role": "financeiro",
+    "full_name": "Ingrid Almeida",
+    "crm": "",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

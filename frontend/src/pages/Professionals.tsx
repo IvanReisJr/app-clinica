@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import api from '../api';
+import { apiClient } from '../lib/api';
 
 interface Professional {
     id: number;
@@ -26,14 +26,14 @@ export function Professionals() {
     const { data: professionals, isLoading } = useQuery<Professional[]>({
         queryKey: ['professionals'],
         queryFn: async () => {
-            const response = await api.get('v1/professionals/');
+            const response = await apiClient.get('professionals/');
             return response.data;
         }
     });
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            await api.delete(`v1/professionals/${id}/`);
+            await apiClient.delete(`professionals/${id}/`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['professionals'] });
@@ -49,7 +49,7 @@ export function Professionals() {
 
     const toggleStatusMutation = useMutation({
         mutationFn: async ({ id, is_active }: { id: number, is_active: boolean }) => {
-            await api.patch(`v1/professionals/${id}/`, { is_active });
+            await apiClient.patch(`professionals/${id}/`, { is_active });
         },
         onMutate: async ({ id, is_active }) => {
             await queryClient.cancelQueries({ queryKey: ['professionals'] });
@@ -83,9 +83,11 @@ export function Professionals() {
                         Equipe clínica, horários e vinculação de usuários.
                     </p>
                 </div>
-                <Button render={<Link to="/professionals/new" />}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Profissional
+                <Button asChild>
+                    <Link to="/professionals/new">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Profissional
+                    </Link>
                 </Button>
             </div>
 

@@ -41,13 +41,13 @@ export function UsersPage() {
 
     const { data: users = [] } = useQuery<User[]>({
         queryKey: ['users'],
-        queryFn: async () => (await api.get('v1/users/')).data
+        queryFn: async () => (await apiClient.get('users/')).data
     });
 
     useQuery({
         queryKey: ['permissions', selectedRole],
         queryFn: async () => {
-            const res = await api.get(`v1/permissions/matrix/?role=${selectedRole}`);
+            const res = await apiClient.get(`permissions/matrix/?role=${selectedRole}`);
             setPermissions(res.data);
             return res.data;
         },
@@ -55,7 +55,7 @@ export function UsersPage() {
     });
 
     const mutToggle = useMutation({
-        mutationFn: async (user: User) => await api.patch(`v1/users/${user.id}/`, { is_active: !user.is_active }),
+        mutationFn: async (user: User) => await apiClient.patch(`users/${user.id}/`, { is_active: !user.is_active }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
             toast.success("Status do usuário atualizado.");
@@ -64,7 +64,7 @@ export function UsersPage() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            await api.delete(`v1/users/${id}/`);
+            await apiClient.delete(`users/${id}/`);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -144,7 +144,7 @@ export function UsersPage() {
                             onClick={async () => {
                                 setIsSaving(true);
                                 try {
-                                    await api.post('v1/permissions/bulk_save/', {
+                                    await apiClient.post('permissions/bulk_save/', {
                                         role: selectedRole,
                                         permissions: permissions.map(p => ({ slug: p.slug, is_granted: p.is_granted }))
                                     });
@@ -257,7 +257,7 @@ export function UsersPage() {
                                 onClick={async () => {
                                     setIsSaving(true);
                                     try {
-                                        await api.post('v1/permissions/bulk_save/', {
+                                        await apiClient.post('permissions/bulk_save/', {
                                             role: selectedRole,
                                             permissions: permissions.map(p => ({ slug: p.slug, is_granted: p.is_granted }))
                                         });

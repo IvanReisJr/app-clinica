@@ -4,6 +4,30 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] - 2026-03-18
+### Adicionado
+- **Módulo de Faturamento (TISS/TUSS)**:
+    - Criação do app backend `faturamento` com tabelas `BillingLot` e `BillingItem`.
+    - Lógica de extração de agendamentos finalizados com convênio para a fila de controle.
+    - Nova Tela no menu lateral: **Faturamento de Lotes**.
+    - Implementação de abas para **Pendentes** e **Lotes Enviados**.
+    - Mecânica de agrupar atendimentos e gerar blocos (Lotes) com 1 clique.
+    - Tela de **Conciliação de Guias** em real-time (Botões: Pago, Glosa, Recurso).
+- **Adequação do TUSS no Check-in (Agenda)**:
+    - Inserção dos campos `procedimento_tuss`, `guia_number` e `authorization_number` no modelo `Appointment`.
+    - Formulário dinâmico no Frontend: Ao selecionar Convênio, os inputs de faturamento do Check-in abrem imediatamente.
+
+### Alterado
+- **Agenda Multiponto**:
+    - Bloqueio Dinâmico "Real-time" de Slots Antigos: Slots com horário antes do relógio atual mudam visualmente para Cinza com Badge "Expirado" instantaneamente na tela, ignorando lixo de cash.
+    - Ajuste nos Ícones da tabela de Agenda (Sempre visíveis em vez de visíveis apenas no hover).
+    - Campo *Observação* substituído por Textarea ampla com sombra interna (`shadow-inner`) e Dica Direta.
+
+## [1.2.1] - 2026-03-17
+### Adicionado
+- **Módulo de Convênios**: Criação inicial do app backend para gestão de operadoras e tabelas TUSS.
+- **Validação de Convênio em Pacientes**: Adicionada trava de segurança no formulário de pacientes para evitar glosa, tornando o Convênio obrigatório (ou Particular).
+
 ## [1.2.0] - 2026-03-10
 
 ### Adicionado

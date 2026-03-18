@@ -1,0 +1,9 @@
+pytest==8.3.3
+pytest-django==4.9.0
+factory-boy==3.3.1
+pytest-cov==5.0.0
+pytest-xdist==3.6.1
+
+pytest-factoryboy==2.8.1
+Faker==36.1.1
+

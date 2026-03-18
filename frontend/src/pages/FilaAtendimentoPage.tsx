@@ -59,7 +59,7 @@ export function FilaAtendimentoPage() {
             // Load appointments
             const params = new URLSearchParams();
             params.append('date', today);
-            const { data } = await api.get(`v1/appointments/?${params.toString()}`);
+            const { data } = await apiClient.get(`appointments/?${params.toString()}`);
             return data.filter((d: any) => d.status === 'aguardando' || d.status === 'chamado' || d.status === 'em_atendimento');
         },
         refetchInterval: 3000,
@@ -75,7 +75,7 @@ export function FilaAtendimentoPage() {
             if (started) {
                 payload.attendance_started_at = new Date().toISOString();
             }
-            return await api.patch(`v1/appointments/${id}/`, payload);
+            return await apiClient.patch(`appointments/${id}/`, payload);
         },
         onSuccess: (_, variables) => {
             toast.success(variables.status === 'em_atendimento' ? "Atendimento iniciado!" : "Paciente chamado no painel!");

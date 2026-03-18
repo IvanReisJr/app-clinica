@@ -84,9 +84,9 @@ export function UserModal({ isOpen, onClose, user }: UserModalProps) {
             }
 
             if (user) {
-                return api.put(`v1/users/${user.id}/`, payload);
+                return apiClient.put(`users/${user.id}/`, payload);
             } else {
-                return api.post("v1/users/", payload);
+                return apiClient.post("v1/users/", payload);
             }
         },
         onSuccess: () => {

@@ -25,11 +25,11 @@ export function GeneralMovementModal({ isOpen, onClose }: GeneralMovementModalPr
 
     const { data: medications = [] } = useQuery({
         queryKey: ['medications_active'],
-        queryFn: async () => (await api.get('v1/medications/?is_active=true')).data
+        queryFn: async () => (await apiClient.get('medications/?is_active=true')).data
     });
 
     const mutCreate = useMutation({
-        mutationFn: async (payload: any) => await api.post('v1/medication_movements/', payload),
+        mutationFn: async (payload: any) => await apiClient.post('medication_movements/', payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['all_medication_movements'] });
             queryClient.invalidateQueries({ queryKey: ['medications'] });

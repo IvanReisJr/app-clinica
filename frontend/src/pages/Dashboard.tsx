@@ -2,14 +2,14 @@ import { Activity, Users, CalendarDays, TrendingUp, Loader2 } from 'lucide-react
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
-import api from '../api';
+import { apiClient } from '../lib/api';
 
 export function Dashboard() {
     const { user } = useAuth();
 
     const { data: stats, isLoading } = useQuery({
         queryKey: ['dashboard-stats'],
-        queryFn: async () => (await api.get('v1/dashboard/stats/')).data
+        queryFn: async () => (await apiClient.get('dashboard/stats/')).data
     });
 
     if (isLoading) {

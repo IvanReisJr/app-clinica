@@ -16,3 +16,9 @@ Este arquivo contém ideias e melhorias sugeridas durante o desenvolvimento para
 ## Interface e UX
 - [ ] **Dashboard de Alertas**: Uma visão geral na home que mostre quantos itens estão vencidos ou com estoque baixo sem precisar entrar na página de Medicamentos.
 - [ ] **Notificações por E-mail/WhatsApp**: Avisar o responsável quando um estoque atingir o nível crítico.
+
+## Segurança e Distribuição Comercial (Anti-Pirataria)
+- [ ] **Transição de `git clone` para Docker Registry Privado**: No momento (desenvolvimento/homologação), o sistema é clonado inteiro em texto aberto. Para instalações finais (*On-Premise*) na máquina da clínica cliente, é fundamental **NÃO enviar o código fonte**.
+    - **Solução**: Vamos compilar o Backend e Frontend em imagens binárias fechadas Docker (ex: `ivanreis/medtrace-backend:latest`).
+    - O cliente terá apenas um arquivo `docker-compose.yml` de 30 linhas apontando para nosso repositório privado (Docker Hub/GHCR).
+    - Ele rodará `docker-compose pull` para baixar a aplicação compilada sem acesso às regras de negócio, arquivos TypeScript ou Python, protegendo 100% a Propriedade Intelectual do Medtrace.
