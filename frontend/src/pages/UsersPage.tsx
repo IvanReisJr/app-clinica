@@ -4,7 +4,7 @@ import {
     Shield, UserPlus, Trash2
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../api";
+import { apiClient } from "@/lib/api";
 import { cn } from "../lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -324,20 +324,20 @@ export function UsersPage() {
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-center gap-1">
                                             <Tooltip>
-                                                <TooltipTrigger render={(p) => (
-                                                    <Button {...p} onClick={() => { setSelectedUser(u); setIsModalOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                                <TooltipTrigger asChild>
+                                                    <Button onClick={() => { setSelectedUser(u); setIsModalOpen(true); }} variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
-                                                )} />
+                                                </TooltipTrigger>
                                                 <TooltipContent side="top">Editar Usuário</TooltipContent>
                                             </Tooltip>
 
                                             <Tooltip>
-                                                <TooltipTrigger render={(p) => (
-                                                    <Button {...p} onClick={() => handleDelete(u.id, u.username)} variant="ghost" size="icon" className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50">
+                                                <TooltipTrigger asChild>
+                                                    <Button onClick={() => handleDelete(u.id, u.username)} variant="ghost" size="icon" className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50">
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
-                                                )} />
+                                                </TooltipTrigger>
                                                 <TooltipContent side="top">Excluir Permanente</TooltipContent>
                                             </Tooltip>
                                         </div>
