@@ -146,25 +146,30 @@ export default function ScheduleConfig({ onClose }: { onClose: () => void }) {
                     <span className={`w-20 text-sm font-medium ${isActive ? '' : 'text-muted-foreground'}`}>{DAY_LABELS[day]}</span>
                   </div>
                   {isActive && sched && (
-                    <div className="flex items-center gap-2 flex-1 flex-wrap">
-                      <Input type="time" value={sched.start_time} onChange={e => updateSchedule(day, "start_time", e.target.value)} className="w-28 h-8 text-sm" />
-                      <span className="text-muted-foreground text-xs">até</span>
-                      <Input type="time" value={sched.end_time} onChange={e => updateSchedule(day, "end_time", e.target.value)} className="w-28 h-8 text-sm" />
-                      <Select value={String(sched.slot_duration_minutes)} onValueChange={v => updateSchedule(day, "slot_duration_minutes", parseInt(v))}>
-                        <SelectTrigger className="w-24 h-8 text-xs bg-white dark:bg-slate-950">
-                          <Clock className="h-3 w-3 mr-1" /><SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="10">10 min</SelectItem>
-                          <SelectItem value="15">15 min</SelectItem>
-                          <SelectItem value="20">20 min</SelectItem>
-                          <SelectItem value="25">25 min</SelectItem>
-                          <SelectItem value="30">30 min</SelectItem>
-                          <SelectItem value="40">40 min</SelectItem>
-                          <SelectItem value="60">60 min</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 flex-1 w-full pl-0 sm:pl-4 mt-3 sm:mt-0 border-t sm:border-none pt-3 sm:pt-0 border-slate-100">
+                        <div className="flex items-center gap-2">
+                          <Input type="time" value={sched.start_time} onChange={e => updateSchedule(day, "start_time", e.target.value)} className="w-[110px] h-9 text-sm bg-white border-slate-200 text-slate-900" />
+                          <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">até</span>
+                          <Input type="time" value={sched.end_time} onChange={e => updateSchedule(day, "end_time", e.target.value)} className="w-[110px] h-9 text-sm bg-white border-slate-200 text-slate-900" />
+                        </div>
+                        <Select value={String(sched.slot_duration_minutes)} onValueChange={v => updateSchedule(day, "slot_duration_minutes", parseInt(v))}>
+                          <SelectTrigger className="w-[130px] h-9 text-sm bg-white border-slate-200 text-slate-900 shadow-sm focus:ring-blue-500">
+                            <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-blue-500" />
+                                <SelectValue />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent className="bg-white border-slate-200">
+                            <SelectItem value="10">10 min</SelectItem>
+                            <SelectItem value="15">15 min</SelectItem>
+                            <SelectItem value="20">20 min</SelectItem>
+                            <SelectItem value="25">25 min</SelectItem>
+                            <SelectItem value="30">30 min</SelectItem>
+                            <SelectItem value="40">40 min</SelectItem>
+                            <SelectItem value="60">1 hora</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                   )}
                 </div>
               );
