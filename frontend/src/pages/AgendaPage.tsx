@@ -708,7 +708,7 @@ export function AgendaPage() {
 
         {/* ====== BOOKING DIALOG ====== */}
         <Dialog open={bookOpen} onOpenChange={setBookOpen}>
-          <DialogContent className="max-w-md bg-white dark:bg-slate-950">
+          <DialogContent className="max-w-md !bg-white !text-slate-900 border-slate-200 shadow-xl" style={{ backgroundColor: 'white', color: '#0f172a' }}>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 {bookSlot?.isEncaixe && <Zap className="h-5 w-5 text-warning" />}
@@ -727,7 +727,7 @@ export function AgendaPage() {
                   <Input placeholder="Buscar nome ou telefone..." value={patientSearch} onChange={e => setPatientSearch(e.target.value)} className="pl-8 h-9 text-sm" />
                 </div>
                 {(patientSearch || !selectedPatientId) && (
-                  <div className="absolute z-[100] w-full mt-1 border rounded-md max-h-40 overflow-y-auto divide-y text-sm bg-white dark:bg-slate-950 shadow-xl">
+                  <div className="absolute z-[100] w-full mt-1 border border-slate-200 rounded-md max-h-40 overflow-y-auto divide-y text-sm !bg-white !text-slate-900 shadow-xl" style={{ backgroundColor: 'white' }}>
                     {filteredPatients.map(p => (
                       <div key={p.id} className={`px-3 py-2 cursor-pointer hover:bg-muted/50 ${selectedPatientId === p.id ? 'bg-primary/10 font-medium' : ''}`}
                         onClick={() => { setSelectedPatientId(p.id); setPatientSearch(p.name); }}>
