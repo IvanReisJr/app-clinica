@@ -4,6 +4,17 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 O formato baseia-se em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.3.1] - 2026-03-19
+### Corrigido
+- **Interface e UX Global (Dark Mode Leak)**:
+    - Desativação do modo escuro pelo sistema operacional (`darkMode: 'class'` no Tailwind) para forçar o sistema 100% no Modo Claro (Light Theme) em todos os ambientes.
+    - Correção definitiva de "telas pretas" em `DialogContent`, `SelectContent` e `DropdownMenuContent`.
+    - Ajuste de responsividade e alinhamento do componente `ScheduleConfig` (Duração do agendamento agora empilhada para maior intuitividade).
+- **TypeScript e Build**:
+    - Eliminação de mais de 50 erros de compilação (variáveis não lidas, imports incorretos do `apiClient`).
+    - Exclusão de componentes não utilizados do Shadcn UI que causavam falhas no pipeline do Docker.
+    - Refatoração dos tipos de agendamento na `AgendaPage` para suportar `full_name`.
+
 ## [1.3.0] - 2026-03-18
 ### Adicionado
 - **Módulo de Faturamento (TISS/TUSS)**:
