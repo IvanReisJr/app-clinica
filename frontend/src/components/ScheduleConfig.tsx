@@ -146,7 +146,7 @@ export default function ScheduleConfig({ onClose }: { onClose: () => void }) {
                     <span className={`w-20 text-sm font-medium ${isActive ? '' : 'text-muted-foreground'}`}>{DAY_LABELS[day]}</span>
                   </div>
                   {isActive && sched && (
-                      <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 flex-1 w-full pl-0 sm:pl-4 mt-3 sm:mt-0 border-t sm:border-none pt-3 sm:pt-0 border-slate-100">
+                      <div className="flex flex-col gap-3 flex-1 w-full pl-0 sm:pl-4 mt-3 sm:mt-0 border-t sm:border-none pt-3 sm:pt-0 border-slate-100">
                         <div className="flex items-center gap-2">
                           <Input type="time" value={sched.start_time} onChange={e => updateSchedule(day, "start_time", e.target.value)} className="w-[110px] h-9 text-sm bg-white border-slate-200 text-slate-900" />
                           <span className="text-slate-500 text-xs font-semibold uppercase tracking-wider">até</span>
@@ -159,14 +159,14 @@ export default function ScheduleConfig({ onClose }: { onClose: () => void }) {
                                 <SelectValue />
                             </div>
                           </SelectTrigger>
-                          <SelectContent className="bg-white border-slate-200">
-                            <SelectItem value="10">10 min</SelectItem>
-                            <SelectItem value="15">15 min</SelectItem>
-                            <SelectItem value="20">20 min</SelectItem>
-                            <SelectItem value="25">25 min</SelectItem>
-                            <SelectItem value="30">30 min</SelectItem>
-                            <SelectItem value="40">40 min</SelectItem>
-                            <SelectItem value="60">1 hora</SelectItem>
+                          <SelectContent className="!bg-white !text-slate-900 border-slate-200" style={{ backgroundColor: 'white', color: 'black' }}>
+                            <SelectItem value="10" className="focus:bg-slate-100 cursor-pointer">10 min</SelectItem>
+                            <SelectItem value="15" className="focus:bg-slate-100 cursor-pointer">15 min</SelectItem>
+                            <SelectItem value="20" className="focus:bg-slate-100 cursor-pointer">20 min</SelectItem>
+                            <SelectItem value="25" className="focus:bg-slate-100 cursor-pointer">25 min</SelectItem>
+                            <SelectItem value="30" className="focus:bg-slate-100 cursor-pointer">30 min</SelectItem>
+                            <SelectItem value="40" className="focus:bg-slate-100 cursor-pointer">40 min</SelectItem>
+                            <SelectItem value="60" className="focus:bg-slate-100 cursor-pointer">1 hora</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
